@@ -34,8 +34,18 @@
   </nav>
 
   <!-- 主要內容區域 -->
-  <main class="main-content">
-    <router-view />
+   <main class="main-content">
+    <router-view v-slot="{ Component, route }">
+      <transition 
+        name="fade" 
+        mode="out-in"
+        @before-enter="onBeforeEnter"
+        @enter="onEnter"
+        @leave="onLeave"
+      >
+        <component :is="Component" :key="route.path" />
+      </transition>
+    </router-view>
   </main>
 
   <!-- 頁腳 -->

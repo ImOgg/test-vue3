@@ -433,6 +433,88 @@ export function useUserForm(initialData = {}) {
 - 使用者互動
 - 組合 Hooks 和 Composable
 
+## 🎨 路由動畫實現
+
+### 📝 技術筆記：Router-View 的進階用法
+
+**基本寫法 vs 進階寫法對比：**
+
+```vue
+<!-- ❌ 基本寫法：沒有動畫效果 -->
+<router-view />
+
+<!-- ✅ 進階寫法：有 fade in/out 動畫 -->
+<router-view v-slot="{ Component, route }">
+  <transition name="fade" mode="out-in">
+    <component :is="Component" :key="route.path" />
+  </transition>
+</router-view>
+```
+
+### 🔍 v-slot 數據來源解析
+
+**重要概念：** `v-slot="{ Component, route }"` 中的數據是 **Vue Router 內建提供的**，不需要任何 import！
+
+```javascript
+// Vue Router 內部機制 (概念說明)
+function RouterView() {
+  const currentComponent = findMatchingComponent() // 找到對應組件
+  const currentRoute = getCurrentRoute()           // 獲取路由信息
+  
+  // 透過 slot props 傳遞給使用者
+  return {
+    Component: currentComponent,  // 當前路由的組件 (如 Home.vue, UserList.vue)
+    route: currentRoute          // 路由對象 { path, params, query, name... }
+  }
+}
+```
+
+### 🎯 動畫配置說明
+
+```vue
+<transition 
+  name="fade" 
+  mode="out-in"
+  @before-enter="onBeforeEnter"
+  @enter="onEnter" 
+  @leave="onLeave"
+>
+  <component :is="Component" :key="route.path" />
+</transition>
+```
+
+**參數說明：**
+- **`name="fade"`**: CSS 類名前綴，生成 `.fade-enter-active` 等類
+- **`mode="out-in"`**: 舊組件先離開，新組件再進入
+- **`:key="route.path"`**: 確保路由變化時組件重新渲染
+- **事件鉤子**: 可選的 JavaScript 動畫控制
+
+### 💫 CSS 動畫類名生成規則
+
+Vue 自動生成以下 CSS 類名：
+
+```css
+/* 進入動畫 */
+.fade-enter-from { opacity: 0; transform: translateX(30px); }
+.fade-enter-active { transition: all 0.4s ease; }
+.fade-enter-to { opacity: 1; transform: translateX(0); }
+
+/* 離開動畫 */
+.fade-leave-from { opacity: 1; transform: translateX(0); }
+.fade-leave-active { transition: all 0.3s ease; }
+.fade-leave-to { opacity: 0; transform: translateX(-30px); }
+```
+
+### 🚀 實現位置
+
+**❌ 錯誤認知：** 在 `router/index.js` 設定動畫
+**✅ 正確做法：** 在 `App.vue` 的 `<router-view>` 包裝動畫
+
+```
+router/index.js  → 路由邏輯配置
+App.vue         → UI 動畫效果 ← 在這裡實現！
+```
+
 **Vue Query 使用範例：**
 ```vue
 <script setup>
