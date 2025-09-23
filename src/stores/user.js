@@ -1,20 +1,25 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { userAPI, authAPI } from '../services/api/index.js'
+import { userAPI } from '../services/api/index.js'
 
 export const useUserStore = defineStore('user', () => {
   // 🎯 State
   const users = ref([])
-  const currentUser = ref(null)
-  const token = ref(localStorage.getItem('token'))
   const loading = ref(false)
   const error = ref(null)
+  const lastFetchTime = ref(null) // 🆕 緩存時間戳
 
   // 🎯 Getters (computed)
-  const isLoggedIn = computed(() => !!token.value)
   const activeUsers = computed(() => users.value.filter(u => u.isActive))
   const userCount = computed(() => users.value.length)
   const activeUserCount = computed(() => activeUsers.value.length)
+  
+  // 🆕 檢查數據是否過期 (5分鐘緩存)
+  const isStale = computed(() => {
+    if (!lastFetchTime.value) return true
+    const fiveMinutes = 5 * 60 * 1000
+    return Date.now() - lastFetchTime.value > fiveMinutes
+  })
 
   // 🎯 Actions
 
@@ -28,62 +33,10 @@ export const useUserStore = defineStore('user', () => {
     loading.value = state
   }
 
-  // === 認證相關 ===
-  
-  // 登入
-  const login = async (loginData) => {
-    setLoading(true)
-    clearError()
-    
-    try {
-      const response = await authAPI.login(loginData)
-      
-      // 儲存 token 和用戶資訊
-      token.value = response.token
-      currentUser.value = response.user
-      localStorage.setItem('token', response.token)
-      
-      return { success: true, user: response.user }
-    } catch (err) {
-      error.value = err.message
-      return { success: false, error: err.message }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 登出
-  const logout = async () => {
-    try {
-      await authAPI.logout()
-    } catch (err) {
-      console.error('登出錯誤:', err)
-    } finally {
-      // 無論如何都清除本地狀態
-      token.value = null
-      currentUser.value = null
-      localStorage.removeItem('token')
-    }
-  }
-
-  // 檢查登入狀態
-  const checkAuth = async () => {
-    const storedToken = localStorage.getItem('token')
-    if (!storedToken) return false
-
-    try {
-      const isValid = await authAPI.validateToken(storedToken)
-      if (isValid) {
-        token.value = storedToken
-        // 可以在這裡獲取當前用戶資訊
-        return true
-      }
-    } catch (err) {
-      console.error('Token 驗證失敗:', err)
-      logout()
-    }
-    
-    return false
+  // 🆕 設置用戶數據 (供 VueUse hook 使用)
+  const setUsers = (userData) => {
+    users.value = userData
+    lastFetchTime.value = Date.now()
   }
 
   // === 用戶管理 ===
@@ -158,11 +111,6 @@ export const useUserStore = defineStore('user', () => {
       const index = users.value.findIndex(u => u.id === id)
       if (index !== -1) {
         users.value[index] = updatedUser
-      }
-      
-      // 如果更新的是當前用戶，也要更新 currentUser
-      if (currentUser.value && currentUser.value.id === id) {
-        currentUser.value = updatedUser
       }
       
       return updatedUser
@@ -248,35 +196,28 @@ export const useUserStore = defineStore('user', () => {
   // === 重置狀態 ===
   const resetState = () => {
     users.value = []
-    currentUser.value = null
-    token.value = null
     loading.value = false
     error.value = null
-    localStorage.removeItem('token')
+    lastFetchTime.value = null
   }
 
   return {
     // State
     users,
-    currentUser,
-    token,
     loading,
     error,
+    lastFetchTime, // 🆕
     
     // Getters
-    isLoggedIn,
     activeUsers,
     userCount,
     activeUserCount,
+    isStale, // 🆕
     
     // Actions
     clearError,
     setLoading,
-    
-    // Auth Actions
-    login,
-    logout,
-    checkAuth,
+    setUsers, // 🆕
     
     // User Management Actions
     fetchUsers,

@@ -120,26 +120,3 @@ export const commentAPI = {
     }
   }
 }
-
-// 設定 API
-export const settingsAPI = {
-  // 獲取設定
-  async get() {
-    try {
-      const response = await request.get('/settings')
-      return response.data
-    } catch (error) {
-      handleApiError(error, 'getSettings')
-    }
-  },
-
-  // 更新設定
-  async update(settingsData) {
-    try {
-      const response = await request.put('/settings', settingsData)
-      return response.data
-    } catch (error) {
-      handleApiError(error, 'updateSettings')
-    }
-  }
-}

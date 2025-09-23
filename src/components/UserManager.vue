@@ -127,7 +127,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { usersApi } from '../services/api.js'
-import { CreateUserSchema, UpdateUserSchema } from '../schemas/index.js'
+import { createUserSchema, updateUserSchema } from '../services/schema/index.js'
 
 // Reactive data
 const users = ref([])

@@ -13,7 +13,7 @@ import {
   UpdatePostSchema,
   CreateCommentSchema,
   UpdateCommentSchema
-} from '../schemas/index.js'
+} from './schema/index.js'
 
 // API base configuration
 const api = axios.create({

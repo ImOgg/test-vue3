@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuth } from '../composables/useAuth.js'
 
 // 路由組件（懶加載）
 const Home = () => import('../views/Home.vue')

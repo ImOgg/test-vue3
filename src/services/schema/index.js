@@ -1,6 +1,38 @@
+/*
+📁 Schema 模組化說明
+
+本專案採用單一檔案集中管理所有 schema，但也可以拆分成多個模組：
+
+🔧 建議的模組化結構：
+src/services/schema/
+├── index.js          # 統一導出
+├── user.js           # 用戶相關 schema
+├── post.js           # 文章相關 schema
+├── comment.js        # 留言相關 schema
+└── common.js         # 共用 schema (API 回應格式等)
+
+📝 使用方式：
+// 方式1: 從統一入口導入
+import { userSchema, postSchema } from '@/services/schema'
+
+// 方式2: 從特定模組導入
+import { userSchema } from '@/services/schema/user.js'
+import { postSchema } from '@/services/schema/post.js'
+
+💡 何時考慮拆分：
+- Schema 數量超過 10 個
+- 單檔案超過 500 行
+- 需要團隊協作開發
+- 想要更細緻的依賴管理
+
+⚡ 目前專案規模適合單檔案管理，簡單直接！
+*/
+
 import { z } from 'zod'
 
 // 用戶相關 schemas
+
+// 基本用戶模型 - 定義用戶的完整資料結構
 export const userSchema = z.object({
   id: z.number(),
   name: z.string().min(1, '姓名不能為空'),
@@ -11,24 +43,19 @@ export const userSchema = z.object({
   isActive: z.boolean().default(true)
 })
 
+// 用戶清單 - 用於獲取多個用戶時的驗證
 export const userListSchema = z.array(userSchema)
 
+// 新增用戶 - 排除 id 欄位（因為新增時不需要提供 id）
 export const createUserSchema = userSchema.omit({ id: true })
+
+// 更新用戶 - 所有欄位都變成可選，並排除 id
 export const updateUserSchema = userSchema.partial().omit({ id: true })
 
-// 登入相關 schemas
-export const loginSchema = z.object({
-  email: z.string().email('請輸入正確的信箱格式'),
-  password: z.string().min(6, '密碼至少需要6個字元')
-})
-
-export const loginResponseSchema = z.object({
-  token: z.string(),
-  user: userSchema,
-  expiresIn: z.number().optional()
-})
-
 // 文章相關 schemas
+// 文章相關 schemas
+
+// 基本文章模型 - 定義文章的完整資料結構
 export const postSchema = z.object({
   id: z.number(),
   title: z.string().min(1, '標題不能為空'),
@@ -38,20 +65,32 @@ export const postSchema = z.object({
   tags: z.array(z.string()).optional().default([])
 })
 
+// 文章清單 - 用於獲取多個文章時的驗證
 export const postListSchema = z.array(postSchema)
+
+// 新增文章 - 排除 id 欄位（新增時由後端自動產生）
 export const createPostSchema = postSchema.omit({ id: true })
+
+// 更新文章 - 所有欄位都變成可選，並排除 id
 export const updatePostSchema = postSchema.partial().omit({ id: true })
 
 // 留言相關 schemas
+
+// 基本留言模型 - 定義留言的完整資料結構
 export const commentSchema = z.object({
   id: z.number(),
   content: z.string().min(1, '留言內容不能為空'),
-  postId: z.number(),
-  userId: z.number()
+  postId: z.number(),  // 所屬文章的 ID
+  userId: z.number()   // 留言作者的 ID
 })
 
+// 留言清單 - 用於獲取多個留言時的驗證
 export const commentListSchema = z.array(commentSchema)
+
+// 新增留言 - 排除 id 欄位（由後端自動產生）
 export const createCommentSchema = commentSchema.omit({ id: true })
+
+// 更新留言 - 通常只能修改內容，所以變成可選
 export const updateCommentSchema = commentSchema.partial().omit({ id: true })
 
 // API 回應通用格式
@@ -78,26 +117,6 @@ export const errorResponseSchema = z.object({
   error: z.string(),
   message: z.string(),
   statusCode: z.number()
-})
-
-// 設定相關 schemas
-export const settingsSchema = z.object({
-  theme: z.enum(['light', 'dark']).default('light'),
-  language: z.enum(['zh-TW', 'zh-CN', 'en']).default('zh-TW'),
-  notifications: z.object({
-    email: z.boolean().default(true),
-    push: z.boolean().default(true),
-    sms: z.boolean().default(false)
-  }).default({}),
-  simpleList: z.array(z.number()).optional()
-})
-
-// 統計資料 schemas
-export const statsSchema = z.object({
-  userCount: z.number(),
-  postCount: z.number(),
-  commentCount: z.number(),
-  activeUsers: z.number()
 })
 
 // 導出解析函數
@@ -232,18 +251,14 @@ export const parseComments = (data) => {
   }
   return commentListSchema.parse(data)
 }
-export const parseLoginResponse = (data) => loginResponseSchema.parse(data)
-export const parseSettings = (data) => settingsSchema.parse(data)
-export const parseStats = (data) => statsSchema.parse(data)
-
 // 導出型別定義（用於 JSDoc 或 TypeScript 轉換）
 export const UserType = userSchema
 export const PostType = postSchema
 export const CommentType = commentSchema
-export const LoginDataType = loginSchema
-export const SettingsType = settingsSchema
 
-// 表單驗證輔助函數
+// 表單驗證輔助函數 - 幫助前端做即時驗證
+
+// 驗證用戶表單 - 返回驗證結果和錯誤訊息
 export const validateUserForm = (data) => {
   try {
     createUserSchema.parse(data)
@@ -259,21 +274,7 @@ export const validateUserForm = (data) => {
   }
 }
 
-export const validateLoginForm = (data) => {
-  try {
-    loginSchema.parse(data)
-    return { isValid: true, errors: {} }
-  } catch (error) {
-    const errors = {}
-    if (error.errors) {
-      error.errors.forEach(err => {
-        errors[err.path[0]] = err.message
-      })
-    }
-    return { isValid: false, errors }
-  }
-}
-
+// 驗證文章表單 - 返回驗證結果和錯誤訊息
 export const validatePostForm = (data) => {
   try {
     createPostSchema.parse(data)

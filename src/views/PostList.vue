@@ -111,14 +111,14 @@
         </div>
 
         <div class="post-footer">
-          <div class="post-stats">
+          <!-- <div class="post-stats">
             <span class="stat-item">
               💬 {{ getPostComments(post.id).length }} 留言
             </span>
             <span class="stat-item">
               👁️ {{ post.views || 0 }} 瀏覽
             </span>
-          </div>
+          </div> -->
           <div class="post-tags" v-if="post.tags && post.tags.length">
             <span v-for="tag in post.tags.slice(0, 3)" :key="tag" class="tag">
               #{{ tag }}
