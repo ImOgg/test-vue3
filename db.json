@@ -1,0 +1,175 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "張三",
+      "email": "zhang@example.com",
+      "phone": "0912345678",
+      "age": 25,
+      "city": "台北",
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "name": "李四",
+      "email": "li@example.com",
+      "phone": "0923456789",
+      "age": 30,
+      "city": "台中",
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "name": "王五",
+      "email": "wang@example.com",
+      "phone": "0934567890",
+      "age": 28,
+      "city": "高雄",
+      "isActive": false
+    },
+    {
+      "id": 4,
+      "name": "測試用戶",
+      "email": "test@example.com",
+      "phone": "0945678901",
+      "age": 25,
+      "city": "台北",
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "name": "勳勳",
+      "email": "hsun@example.com",
+      "phone": "0956789012",
+      "age": 26,
+      "city": "台北",
+      "isActive": true
+    },
+    {
+      "id": 6,
+      "name": "test1234",
+      "email": "test5555@gmail.com",
+      "phone": "",
+      "age": 25,
+      "city": "台北",
+      "isActive": true
+    },
+    {
+      "id": 7,
+      "name": "test3344",
+      "email": "test1234@gmail.com",
+      "phone": "0912355678",
+      "age": 26,
+      "city": "台北",
+      "isActive": true
+    },
+    {
+      "id": 8,
+      "name": "test12345",
+      "email": "ooo871022@gmail.com",
+      "phone": "0901173777",
+      "age": 22,
+      "city": "台北",
+      "isActive": true
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Vue 3 完整架構指南",
+      "content": "本文將介紹如何建立完整的 Vue 3 應用程式架構，包括狀態管理、路由配置等...",
+      "userId": 1,
+      "status": "published",
+      "tags": [
+        "Vue.js",
+        "Architecture",
+        "Frontend"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Zod 資料驗證最佳實踐",
+      "content": "Zod 是一個強大的 TypeScript 優先的資料驗證庫，本文將介紹其使用方式...",
+      "userId": 2,
+      "status": "published",
+      "tags": [
+        "Zod",
+        "Validation",
+        "TypeScript"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Pinia 狀態管理入門",
+      "content": "Pinia 是 Vue 3 的官方狀態管理庫，提供了直觀且功能強大的 API...",
+      "userId": 1,
+      "status": "draft",
+      "tags": [
+        "Pinia",
+        "State Management",
+        "Vue.js"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "ZOD讚",
+      "content": "ZOD讚讚",
+      "userId": 1,
+      "status": "draft",
+      "tags": [
+        "ZOD"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "rgfgfdg",
+      "content": "fdgfdgf",
+      "userId": 2,
+      "status": "draft",
+      "tags": [
+        "gfdg"
+      ]
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "content": "這篇文章寫得很詳細，對我很有幫助！",
+      "postId": 1,
+      "userId": 2
+    },
+    {
+      "id": 2,
+      "content": "可以再多加一些實際的程式碼範例嗎？",
+      "postId": 1,
+      "userId": 3
+    },
+    {
+      "id": 3,
+      "content": "Zod 真的很好用，推薦大家都來試試！",
+      "postId": 2,
+      "userId": 1
+    },
+    {
+      "id": 4,
+      "content": "很棒的教學！",
+      "postId": 3,
+      "userId": 1
+    }
+  ],
+  "settings": {
+    "theme": "light",
+    "language": "zh-TW",
+    "notifications": {
+      "email": true,
+      "push": true,
+      "sms": false
+    },
+    "simpleList": [
+      1,
+      2,
+      3,
+      1
+    ]
+  }
+}
