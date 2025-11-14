@@ -1,42 +1,42 @@
 <template>
-  <div class="post-list-container">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- 標題與操作按鈕 -->
-    <div class="header">
-      <h1>📝 文章管理</h1>
-      <div class="header-actions">
-        <button @click="openCreateModal" class="btn btn-primary">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">📝 文章管理</h1>
+      <div class="flex gap-4">
+        <button @click="openCreateModal" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 inline-flex items-center gap-2">
           ➕ 發表文章
         </button>
-        <button @click="refreshPosts" class="btn btn-outline" :disabled="loading">
+        <button @click="refreshPosts" class="px-6 py-3 bg-transparent text-gray-900 border-2 border-gray-900 rounded-lg font-medium hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed" :disabled="loading">
           {{ loading ? '載入中...' : '🔄 重新載入' }}
         </button>
       </div>
     </div>
 
     <!-- 搜尋與篩選 -->
-    <div class="filters">
-      <div class="search-box">
+    <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
+      <div class="mb-4">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="🔍 搜尋文章標題或內容..."
-          class="search-input"
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-gray-500 transition-colors"
         />
       </div>
-      <div class="filter-options">
-        <select v-model="authorFilter" class="filter-select">
+      <div class="flex flex-wrap gap-4">
+        <select v-model="authorFilter" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-500 transition-colors">
           <option value="">所有作者</option>
           <option v-for="author in authors" :key="author.id" :value="author.id">
             {{ author.name }}
           </option>
         </select>
-        <select v-model="sortBy" class="filter-select">
+        <select v-model="sortBy" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-500 transition-colors">
           <option value="title">按標題排序</option>
           <option value="author">按作者排序</option>
           <option value="createdAt">按發表時間排序</option>
           <option value="comments">按留言數排序</option>
         </select>
-        <select v-model="sortOrder" class="filter-select">
+        <select v-model="sortOrder" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-500 transition-colors">
           <option value="asc">升序</option>
           <option value="desc">降序</option>
         </select>
@@ -44,83 +44,75 @@
     </div>
 
     <!-- 文章統計 -->
-    <div class="stats">
-      <div class="stat-item">
-        <span class="stat-label">文章總數</span>
-        <span class="stat-value">{{ postStore.posts?.length || 0 }}</span>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+        <span class="block text-gray-500 text-sm mb-2">文章總數</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ postStore.posts?.length || 0 }}</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">作者人數</span>
-        <span class="stat-value">{{ authors?.length || 0 }}</span>
+      <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+        <span class="block text-gray-500 text-sm mb-2">作者人數</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ authors?.length || 0 }}</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">留言總數</span>
-        <span class="stat-value">{{ postStore.comments?.length || 0 }}</span>
+      <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+        <span class="block text-gray-500 text-sm mb-2">留言總數</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ postStore.comments?.length || 0 }}</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">搜尋結果</span>
-        <span class="stat-value">{{ filteredPosts?.length || 0 }}</span>
+      <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+        <span class="block text-gray-500 text-sm mb-2">搜尋結果</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ filteredPosts?.length || 0 }}</span>
       </div>
     </div>
 
     <!-- 文章列表 -->
-    <div v-if="loading" class="loading">
-      <div class="loading-spinner"></div>
-      <p>載入文章資料中...</p>
+    <div v-if="loading" class="text-center py-12">
+      <div class="w-12 h-12 border-3 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-gray-600">載入文章資料中...</p>
     </div>
 
-    <div v-else-if="filteredPosts.length === 0" class="empty-state">
-      <div class="empty-icon">📝</div>
-      <h3>沒有找到文章</h3>
-      <p>{{ searchQuery ? '請嘗試不同的搜尋條件' : '開始發表第一篇文章吧！' }}</p>
-      <button @click="openCreateModal" class="btn btn-primary">
+    <div v-else-if="filteredPosts.length === 0" class="text-center py-12 bg-white rounded-lg shadow-sm">
+      <div class="text-6xl mb-4">📝</div>
+      <h3 class="text-xl font-semibold text-gray-800 mb-2">沒有找到文章</h3>
+      <p class="text-gray-600 mb-6">{{ searchQuery ? '請嘗試不同的搜尋條件' : '開始發表第一篇文章吧！' }}</p>
+      <button @click="openCreateModal" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-200">
         發表文章
       </button>
     </div>
 
-    <div v-else class="posts-grid">
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <article
         v-for="post in paginatedPosts"
         :key="post.id"
-        class="post-card"
+        class="group bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all duration-200 border border-gray-200 hover:-translate-y-1 hover:shadow-md hover:border-gray-900"
         @click="viewPost(post.id)"
       >
-        <div class="post-header">
-          <div class="post-author">
-            <div class="author-avatar">
+        <div class="flex justify-between items-center px-6 pt-6">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center font-bold text-sm">
               {{ getAuthorInitials(post.userId) }}
             </div>
-            <div class="author-info">
-              <h4 class="author-name">{{ getAuthorName(post.userId) }}</h4>
-              <p class="post-date">{{ formatDate(post.createdAt) }}</p>
+            <div>
+              <h4 class="text-sm text-gray-800 font-medium m-0">{{ getAuthorName(post.userId) }}</h4>
+              <p class="text-xs text-gray-500 m-0">{{ formatDate(post.createdAt) }}</p>
             </div>
           </div>
-          <div class="post-actions" @click.stop>
-            <button @click="editPost(post)" class="action-btn edit" title="編輯">
+          <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" @click.stop>
+            <button @click="editPost(post)" class="bg-white/90 border border-gray-200 rounded px-1 py-1 cursor-pointer text-sm transition-all duration-200 hover:bg-white hover:shadow-sm" title="編輯">
               ✏️
             </button>
-            <button @click="deletePost(post)" class="action-btn delete" title="刪除">
+            <button @click="deletePost(post)" class="bg-white/90 border border-gray-200 rounded px-1 py-1 cursor-pointer text-sm transition-all duration-200 hover:bg-white hover:shadow-sm" title="刪除">
               🗑️
             </button>
           </div>
         </div>
 
-        <div class="post-content">
-          <h2 class="post-title">{{ post.title }}</h2>
-          <p class="post-excerpt">{{ getExcerpt(post.content) }}</p>
+        <div class="px-6 py-4">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 leading-snug m-0">{{ post.title }}</h2>
+          <p class="text-sm text-gray-600 leading-relaxed m-0">{{ getExcerpt(post.content) }}</p>
         </div>
 
-        <div class="post-footer">
-          <!-- <div class="post-stats">
-            <span class="stat-item">
-              💬 {{ getPostComments(post.id).length }} 留言
-            </span>
-            <span class="stat-item">
-              👁️ {{ post.views || 0 }} 瀏覽
-            </span>
-          </div> -->
-          <div class="post-tags" v-if="post.tags && post.tags.length">
-            <span v-for="tag in post.tags.slice(0, 3)" :key="tag" class="tag">
+        <div class="px-6 pb-6 flex justify-between items-center">
+          <div class="flex gap-2 flex-wrap" v-if="post.tags && post.tags.length">
+            <span v-for="tag in post.tags.slice(0, 3)" :key="tag" class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
               #{{ tag }}
             </span>
           </div>
@@ -129,97 +121,98 @@
     </div>
 
     <!-- 分頁 -->
-    <div v-if="totalPages > 1" class="pagination">
+    <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-8">
       <button
         @click="currentPage = Math.max(1, currentPage - 1)"
         :disabled="currentPage === 1"
-        class="page-btn"
+        class="px-3 py-2 border border-gray-300 bg-white rounded-md cursor-pointer transition-all duration-200 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         ◀️ 上一頁
       </button>
-      
-      <div class="page-numbers">
+
+      <div class="flex gap-1">
         <button
           v-for="page in visiblePages"
           :key="page"
           @click="currentPage = page"
-          :class="['page-btn', { active: page === currentPage }]"
+          :class="['px-3 py-2 border border-gray-300 bg-white rounded-md cursor-pointer transition-all duration-200 hover:bg-gray-100', { 'bg-gray-900 text-white border-gray-900 hover:bg-gray-900': page === currentPage }]"
         >
           {{ page }}
         </button>
       </div>
-      
+
       <button
         @click="currentPage = Math.min(totalPages, currentPage + 1)"
         :disabled="currentPage === totalPages"
-        class="page-btn"
+        class="px-3 py-2 border border-gray-300 bg-white rounded-md cursor-pointer transition-all duration-200 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         下一頁 ▶️
       </button>
     </div>
 
     <!-- 文章表單 Modal -->
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h2>{{ isEditing ? '編輯文章' : '發表文章' }}</h2>
-          <button @click="closeModal" class="close-btn">✕</button>
+    <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click="closeModal">
+      <div class="bg-white rounded-lg w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto" @click.stop>
+        <div class="flex justify-between items-center px-6 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-800 m-0">{{ isEditing ? '編輯文章' : '發表文章' }}</h2>
+          <button @click="closeModal" class="bg-transparent border-0 text-2xl cursor-pointer text-gray-500 hover:text-gray-700 transition-colors">✕</button>
         </div>
-        
-        <form @submit.prevent="submitForm" class="post-form">
-          <div class="form-group">
-            <label for="title">文章標題 *</label>
+
+        <form @submit.prevent="submitForm" class="px-6 py-6">
+          <div class="mb-6">
+            <label for="title" class="block mb-2 font-medium text-gray-700">文章標題 *</label>
             <input
               id="title"
               v-model="formData.title"
               type="text"
-              :class="{ error: errors.title }"
+              :class="['w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-gray-500 transition-colors', { 'border-red-500': errors.title }]"
               placeholder="請輸入文章標題"
               required
             />
-            <span v-if="errors.title" class="error-message">{{ errors.title }}</span>
+            <span v-if="errors.title" class="text-red-500 text-sm mt-1 block">{{ errors.title }}</span>
           </div>
 
-          <div class="form-group">
-            <label for="content">文章內容 *</label>
+          <div class="mb-6">
+            <label for="content" class="block mb-2 font-medium text-gray-700">文章內容 *</label>
             <textarea
               id="content"
               v-model="formData.content"
-              :class="{ error: errors.content }"
+              :class="['w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-gray-500 transition-colors resize-y min-h-[120px]', { 'border-red-500': errors.content }]"
               placeholder="請輸入文章內容"
               rows="10"
               required
             ></textarea>
-            <span v-if="errors.content" class="error-message">{{ errors.content }}</span>
+            <span v-if="errors.content" class="text-red-500 text-sm mt-1 block">{{ errors.content }}</span>
           </div>
 
-          <div class="form-group">
-            <label for="author">作者</label>
-            <select id="author" v-model="formData.userId" required>
+          <div class="mb-6">
+            <label for="author" class="block mb-2 font-medium text-gray-700">作者</label>
+            <select id="author" v-model="formData.userId" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-gray-500 transition-colors">
               <option value="">請選擇作者</option>
               <option v-for="author in userStore.users" :key="author.id" :value="author.id">
                 {{ author.name }}
               </option>
             </select>
-            <span v-if="errors.userId" class="error-message">{{ errors.userId }}</span>
+            <span v-if="errors.userId" class="text-red-500 text-sm mt-1 block">{{ errors.userId }}</span>
           </div>
 
-          <div class="form-group">
-            <label for="tags">標籤 (可選)</label>
+          <div class="mb-6">
+            <label for="tags" class="block mb-2 font-medium text-gray-700">標籤 (可選)</label>
             <input
               id="tags"
               v-model="tagsInput"
               type="text"
               placeholder="請輸入標籤，用逗號分隔"
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-gray-500 transition-colors"
             />
-            <small class="form-hint">例如：技術,教學,心得</small>
+            <small class="text-gray-500 text-sm mt-1 block">例如：技術,教學,心得</small>
           </div>
 
-          <div class="form-actions">
-            <button type="button" @click="closeModal" class="btn btn-outline">
+          <div class="flex gap-4 justify-end mt-8">
+            <button type="button" @click="closeModal" class="px-6 py-3 bg-transparent text-gray-900 border-2 border-gray-900 rounded-lg font-medium hover:bg-gray-900 hover:text-white transition-all duration-200">
               取消
             </button>
-            <button type="submit" class="btn btn-primary" :disabled="submitting">
+            <button type="submit" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed" :disabled="submitting">
               {{ submitting ? '處理中...' : (isEditing ? '更新' : '發表') }}
             </button>
           </div>
@@ -469,451 +462,3 @@ onMounted(() => {
   refreshPosts()
 })
 </script>
-
-<style scoped>
-.post-list-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.header h1 {
-  color: #1f2937;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.filters {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.search-box {
-  margin-bottom: 1rem;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.filter-options {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-select {
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  /* background: white; */
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.stat-item {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.stat-label {
-  display: block;
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  display: block;
-  color: #1f2937;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.loading {
-  text-align: center;
-  padding: 3rem;
-}
-
-.loading-spinner {
-  width: 3rem;
-  height: 3rem;
-  border: 3px solid #e5e7eb;
-  border-top: 3px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-}
-
-.post-card {
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid #e5e7eb;
-}
-
-.post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
-}
-
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 1.5rem 0;
-}
-
-.post-author {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.author-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 0.875rem;
-}
-
-.author-name {
-  margin: 0;
-  color: #1f2937;
-  font-size: 0.875rem;
-}
-
-.post-date {
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-.post-actions {
-  display: flex;
-  gap: 0.25rem;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.post-card:hover .post-actions {
-  opacity: 1;
-}
-
-.action-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  padding: 0.25rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.action-btn:hover {
-  background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.post-content {
-  padding: 1rem 1.5rem;
-}
-
-.post-title {
-  margin: 0 0 1rem;
-  color: #1f2937;
-  font-size: 1.25rem;
-  line-height: 1.4;
-}
-
-.post-excerpt {
-  margin: 0;
-  color: #6b7280;
-  line-height: 1.6;
-  font-size: 0.875rem;
-}
-
-.post-footer {
-  padding: 0 1.5rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.post-stats {
-  display: flex;
-  gap: 1rem;
-}
-
-.post-stats .stat-item {
-  background: none;
-  padding: 0;
-  box-shadow: none;
-  text-align: left;
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-.post-tags {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.tag {
-  background: #f3f4f6;
-  color: #6b7280;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 2rem;
-}
-
-.page-btn {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #f3f4f6;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-btn.active {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 0.5rem;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-header h2 {
-  margin: 0;
-  color: #1f2937;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #6b7280;
-}
-
-.close-btn:hover {
-  color: #374151;
-}
-
-.post-form {
-  padding: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 120px;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.form-group input.error,
-.form-group textarea.error {
-  border-color: #ef4444;
-}
-
-.error-message {
-  color: #ef4444;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: block;
-}
-
-.form-hint {
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: block;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-primary {
-  background: #667eea;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #5a6fd8;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
-}
-
-.btn-outline:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-</style>

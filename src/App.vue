@@ -1,65 +1,85 @@
 <template>
-  <div id="app">
+  <div id="app" class="min-h-screen flex flex-col">
     <!-- 導覽列 -->
-    <nav class="navbar">
-    <div class="nav-container">
-      <!-- Logo -->
-      <router-link to="/" class="nav-logo">
-        🚀 Vue 3 企業架構
-      </router-link>
+    <nav class="bg-gray-900 shadow-lg sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <router-link to="/" class="text-2xl font-bold text-white hover:text-gray-300 transition-colors">
+            🚀 Vue 3
+          </router-link>
 
-      <!-- 導覽選單 -->
-      <div class="nav-menu" :class="{ active: isMenuOpen }">
-        <router-link to="/" class="nav-link" @click="closeMenu">
-          🏠 首頁
-        </router-link>
-        <router-link to="/dashboard" class="nav-link" @click="closeMenu">
-          📊 儀表板
-        </router-link>
-        <router-link to="/users" class="nav-link" @click="closeMenu">
-           用戶管理
-        </router-link>
-        <router-link to="/posts" class="nav-link" @click="closeMenu">
-           文章管理
-        </router-link>
+          <!-- 桌面選單 -->
+          <div class="hidden md:flex items-center gap-6">
+            <router-link to="/" class="text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium router-link-exact-active:bg-gray-800">
+              🏠 首頁
+            </router-link>
+            <router-link to="/dashboard" class="text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium router-link-exact-active:bg-gray-800">
+              📊 儀表板
+            </router-link>
+            <router-link to="/users" class="text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium router-link-exact-active:bg-gray-800">
+              用戶管理
+            </router-link>
+            <router-link to="/posts" class="text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium router-link-exact-active:bg-gray-800">
+              文章管理
+            </router-link>
+          </div>
+
+          <!-- 手機選單按鈕 -->
+          <button @click="toggleMenu" class="md:hidden flex flex-col p-2 space-y-1">
+            <span class="w-6 h-0.5 bg-white rounded transition-transform" :class="{ 'rotate-45 translate-y-1.5': isMenuOpen }"></span>
+            <span class="w-6 h-0.5 bg-white rounded transition-opacity" :class="{ 'opacity-0': isMenuOpen }"></span>
+            <span class="w-6 h-0.5 bg-white rounded transition-transform" :class="{ '-rotate-45 -translate-y-1.5': isMenuOpen }"></span>
+          </button>
+        </div>
+
+        <!-- 手機選單 -->
+        <div v-show="isMenuOpen" class="md:hidden pb-4 space-y-2">
+          <router-link to="/" @click="closeMenu" class="block text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium">
+            🏠 首頁
+          </router-link>
+          <router-link to="/dashboard" @click="closeMenu" class="block text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium">
+            📊 儀表板
+          </router-link>
+          <router-link to="/users" @click="closeMenu" class="block text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium">
+            用戶管理
+          </router-link>
+          <router-link to="/posts" @click="closeMenu" class="block text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-all font-medium">
+            文章管理
+          </router-link>
+        </div>
       </div>
+    </nav>
 
-      <!-- 手機選單按鈕 -->
-      <button class="nav-toggle" @click="toggleMenu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
+    <!-- 主要內容區域 -->
+    <main class="flex-1 bg-slate-50">
+      <router-view v-slot="{ Component, route }">
+        <transition
+          name="fade"
+          mode="out-in"
+          @before-enter="onBeforeEnter"
+          @enter="onEnter"
+          @leave="onLeave"
+        >
+          <component :is="Component" :key="route.path" />
+        </transition>
+      </router-view>
+    </main>
 
-  <!-- 主要內容區域 -->
-   <main class="main-content">
-    <router-view v-slot="{ Component, route }">
-      <transition 
-        name="fade" 
-        mode="out-in"
-        @before-enter="onBeforeEnter"
-        @enter="onEnter"
-        @leave="onLeave"
-      >
-        <component :is="Component" :key="route.path" />
-      </transition>
-    </router-view>
-  </main>
-
-  <!-- 頁腳 -->
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2024 Vue 3 企業架構範例. 展示完整的 6 層架構設計</p>
-      <div class="footer-links">
-        <a href="https://vuejs.org" target="_blank">Vue.js</a>
-        <a href="https://pinia.vuejs.org" target="_blank">Pinia</a>
-        <a href="https://zod.dev" target="_blank">Zod</a>
-        <a href="https://axios-http.com" target="_blank">Axios</a>
+    <!-- 頁腳 -->
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-auto">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-center md:text-left">&copy; 2024 Vue 3 企業架構範例. 展示完整的 6 層架構設計</p>
+          <div class="flex gap-6">
+            <a href="https://vuejs.org" target="_blank" class="hover:text-white transition-colors">Vue.js</a>
+            <a href="https://pinia.vuejs.org" target="_blank" class="hover:text-white transition-colors">Pinia</a>
+            <a href="https://zod.dev" target="_blank" class="hover:text-white transition-colors">Zod</a>
+            <a href="https://axios-http.com" target="_blank" class="hover:text-white transition-colors">Axios</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
   </div>
 </template>
 
@@ -79,252 +99,33 @@ const closeMenu = () => {
 }
 </script>
 
-<style scoped>
-#app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+<style>
+/* Fade 轉場動畫 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-/* 導覽列樣式 */
-.navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 70px;
-}
-
-.nav-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-logo:hover {
-  color: #f0f4ff;
-}
-
-.nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.nav-link {
-  color: white;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-
-.nav-link:hover,
-.nav-link.router-link-active {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.875rem;
-}
-
-.btn-primary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.btn-primary:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-}
-
-.nav-toggle {
-  display: none;
-  flex-direction: column;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.nav-toggle span {
-  width: 25px;
-  height: 3px;
-  background: white;
-  margin: 3px 0;
-  transition: 0.3s;
-  border-radius: 2px;
-}
-
-/* 主要內容 */
-.main-content {
-  flex: 1;
-  background: #f8fafc;
-  min-height: calc(100vh - 70px - 80px);
-  /* 減去導覽列和頁腳高度 */
-}
-
-/* 頁腳 */
-.footer {
-  background: #1f2937;
-  color: #9ca3af;
-  padding: 2rem 0;
-  margin-top: auto;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.footer-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.footer-links a {
-  color: #9ca3af;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.footer-links a:hover {
-  color: #667eea;
-}
-
-/* 響應式設計 */
-@media (max-width: 768px) {
-  .nav-container {
-    padding: 0 1rem;
-  }
-
-  .nav-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    flex-direction: column;
-    padding: 1rem;
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s;
-  }
-
-  .nav-menu.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .nav-actions {
-    display: none;
-  }
-
-  .nav-toggle {
-    display: flex;
-  }
-
-  .footer-content {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-logo {
-    font-size: 1.2rem;
-  }
-
-  .nav-link {
-    font-size: 0.9rem;
-  }
-}
-
-/* 全域樣式 */
-:global(body) {
-  margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
-  color: #374151;
-}
-
-:global(*) {
-  box-sizing: border-box;
-}
-
-:global(a) {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* 平滑滾動 */
-:global(html) {
-  scroll-behavior: smooth;
-}
-
-/* 自訂滾動條 */
-:global(::-webkit-scrollbar) {
+/* 全域滾動條樣式 */
+::-webkit-scrollbar {
   width: 8px;
 }
 
-:global(::-webkit-scrollbar-track) {
+::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
-:global(::-webkit-scrollbar-thumb) {
-  background: #667eea;
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
   border-radius: 4px;
 }
 
-:global(::-webkit-scrollbar-thumb:hover) {
-  background: #5a6fd8;
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
 }
 </style>

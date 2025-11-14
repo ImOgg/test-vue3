@@ -1,122 +1,122 @@
 <template>
-  <div class="dashboard-container">
+  <div class="max-w-7xl mx-auto p-4 md:p-8">
     <!-- 歡迎區塊 -->
-    <div class="welcome-section">
-      <div class="welcome-content">
-        <h1>👋 歡迎回來，{{ currentUser?.name || '用戶' }}！</h1>
-        <p>這是您的專屬儀表板，查看最新動態與重要資訊</p>
+    <div class="flex flex-col lg:flex-row justify-between items-center bg-gray-900 text-white p-6 md:p-8 rounded-2xl mb-6 md:mb-8 gap-4 lg:gap-0">
+      <div class="text-center lg:text-left">
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">👋 歡迎回來,{{ currentUser?.name || '用戶' }}!</h1>
+        <p class="opacity-90">這是您的專屬儀表板,查看最新動態與重要資訊</p>
       </div>
-      <div class="quick-actions">
-        <router-link to="/users/create" class="quick-btn">
+      <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+        <router-link to="/users/create" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center">
           ➕ 新增用戶
         </router-link>
-        <router-link to="/posts" class="quick-btn">
+        <router-link to="/posts" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center">
           📝 發表文章
         </router-link>
       </div>
     </div>
 
     <!-- 統計卡片 -->
-    <div class="stats-grid">
-      <div class="stat-card users">
-        <div class="stat-icon">👥</div>
-        <div class="stat-content">
-          <h3>總用戶數</h3>
-          <div class="stat-number">{{ stats.totalUsers }}</div>
-          <div class="stat-change positive">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-4 border border-gray-200">
+        <div class="text-4xl opacity-80">👥</div>
+        <div class="flex-1">
+          <h3 class="text-sm font-medium text-gray-500 mb-1">總用戶數</h3>
+          <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.totalUsers }}</div>
+          <div class="text-xs font-medium text-green-600">
             ↗️ +{{ stats.newUsersToday }} 今日新增
           </div>
         </div>
       </div>
 
-      <div class="stat-card posts">
-        <div class="stat-icon">📄</div>
-        <div class="stat-content">
-          <h3>文章總數</h3>
-          <div class="stat-number">{{ stats.totalPosts }}</div>
-          <div class="stat-change positive">
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-4 border border-gray-200">
+        <div class="text-4xl opacity-80">📄</div>
+        <div class="flex-1">
+          <h3 class="text-sm font-medium text-gray-500 mb-1">文章總數</h3>
+          <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.totalPosts }}</div>
+          <div class="text-xs font-medium text-green-600">
             ↗️ +{{ stats.newPostsToday }} 今日發表
           </div>
         </div>
       </div>
 
-      <div class="stat-card comments">
-        <div class="stat-icon">💬</div>
-        <div class="stat-content">
-          <h3>評論總數</h3>
-          <div class="stat-number">{{ stats.totalComments }}</div>
-          <div class="stat-change neutral">
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-4 border border-gray-200">
+        <div class="text-4xl opacity-80">💬</div>
+        <div class="flex-1">
+          <h3 class="text-sm font-medium text-gray-500 mb-1">評論總數</h3>
+          <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.totalComments }}</div>
+          <div class="text-xs font-medium text-gray-500">
             → {{ stats.avgCommentsPerPost }} 平均每篇
           </div>
         </div>
       </div>
 
-      <div class="stat-card active">
-        <div class="stat-icon">🟢</div>
-        <div class="stat-content">
-          <h3>活躍用戶</h3>
-          <div class="stat-number">{{ stats.activeUsers }}</div>
-          <div class="stat-change positive">
+      <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-4 border border-gray-200">
+        <div class="text-4xl opacity-80">🟢</div>
+        <div class="flex-1">
+          <h3 class="text-sm font-medium text-gray-500 mb-1">活躍用戶</h3>
+          <div class="text-3xl font-bold text-gray-900 mb-1">{{ stats.activeUsers }}</div>
+          <div class="text-xs font-medium text-green-600">
             ↗️ {{ Math.round(stats.activeUsers/stats.totalUsers*100) }}% 活躍率
           </div>
         </div>
       </div>
     </div>
 
-    <div class="dashboard-content">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 md:gap-8">
       <!-- 左側內容 -->
-      <div class="main-content">
+      <div class="flex flex-col gap-6 md:gap-8">
         <!-- 最新文章 -->
-        <div class="content-section">
-          <div class="section-header">
-            <h2>📰 最新文章</h2>
-            <router-link to="/posts" class="see-all">查看全部</router-link>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">📰 最新文章</h2>
+            <router-link to="/posts" class="text-sm font-medium text-gray-700 hover:text-gray-900 hover:underline">查看全部</router-link>
           </div>
-          
-          <div class="recent-posts">
-            <div 
-              v-for="post in recentPosts" 
-              :key="post.id" 
-              class="post-item"
+
+          <div class="flex flex-col gap-4">
+            <div
+              v-for="post in recentPosts"
+              :key="post.id"
+              class="p-4 border border-gray-200 rounded-lg cursor-pointer transition-all duration-200 hover:border-gray-900 hover:bg-slate-50"
               @click="goToPost(post.id)"
             >
-              <div class="post-meta">
-                <span class="post-date">{{ formatDate(post.createdAt) }}</span>
-                <span class="post-author">{{ getAuthorName(post.userId) }}</span>
+              <div class="flex gap-4 mb-2 text-xs text-gray-500">
+                <span>{{ formatDate(post.createdAt) }}</span>
+                <span>{{ getAuthorName(post.userId) }}</span>
               </div>
-              <h4 class="post-title">{{ post.title }}</h4>
-              <p class="post-excerpt">{{ getExcerpt(post.content) }}</p>
-              <div class="post-stats">
-                <span class="comment-count">💬 {{ getCommentCount(post.id) }}</span>
-                <span class="read-time">⏱️ {{ getReadTime(post.content) }} 分鐘</span>
+              <h4 class="text-base font-semibold text-gray-900 mb-2">{{ post.title }}</h4>
+              <p class="text-sm text-gray-600 leading-relaxed mb-3">{{ getExcerpt(post.content) }}</p>
+              <div class="flex gap-4 text-xs text-gray-500">
+                <span>💬 {{ getCommentCount(post.id) }}</span>
+                <span>⏱️ {{ getReadTime(post.content) }} 分鐘</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 用戶活動 -->
-        <div class="content-section">
-          <div class="section-header">
-            <h2>👤 用戶活動</h2>
-            <router-link to="/users" class="see-all">查看全部</router-link>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div class="flex justify-between items-center mb-6 pb-3 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">👤 用戶活動</h2>
+            <router-link to="/users" class="text-sm font-medium text-gray-700 hover:text-gray-900 hover:underline">查看全部</router-link>
           </div>
-          
-          <div class="user-activities">
-            <div 
-              v-for="activity in userActivities" 
+
+          <div class="flex flex-col gap-4">
+            <div
+              v-for="activity in userActivities"
               :key="activity.id"
-              class="activity-item"
+              class="flex gap-3 items-start"
             >
-              <div class="activity-avatar">
+              <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                 {{ getInitials(activity.userName) }}
               </div>
-              <div class="activity-content">
-                <div class="activity-description">
-                  <strong>{{ activity.userName }}</strong> 
+              <div class="flex-1">
+                <div class="text-sm text-gray-900 mb-1">
+                  <strong>{{ activity.userName }}</strong>
                   {{ activity.action }}
-                  <span class="activity-target">{{ activity.target }}</span>
+                  <span class="text-gray-700">{{ activity.target }}</span>
                 </div>
-                <div class="activity-time">{{ formatRelativeTime(activity.timestamp) }}</div>
+                <div class="text-xs text-gray-500">{{ formatRelativeTime(activity.timestamp) }}</div>
               </div>
             </div>
           </div>
@@ -124,34 +124,34 @@
       </div>
 
       <!-- 右側邊欄 -->
-      <div class="sidebar">
+      <div class="flex flex-col gap-6">
         <!-- 系統狀態 -->
-        <div class="sidebar-widget">
-          <h3>🔧 系統狀態</h3>
-          <div class="system-status">
-            <div class="status-item">
-              <span class="status-label">資料庫</span>
-              <span class="status-indicator online">🟢 正常</span>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <h3 class="text-base font-semibold text-gray-900 mb-4">🔧 系統狀態</h3>
+          <div class="flex flex-col gap-3">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-600">資料庫</span>
+              <span class="text-xs font-medium">🟢 正常</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">API 服務</span>
-              <span class="status-indicator online">🟢 正常</span>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-600">API 服務</span>
+              <span class="text-xs font-medium">🟢 正常</span>
             </div>
-            <div class="status-item">
-              <span class="status-label">快取系統</span>
-              <span class="status-indicator warning">🟡 較慢</span>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-600">快取系統</span>
+              <span class="text-xs font-medium">🟡 較慢</span>
             </div>
           </div>
         </div>
 
         <!-- 熱門標籤 -->
-        <div class="sidebar-widget">
-          <h3>🏷️ 熱門標籤</h3>
-          <div class="popular-tags">
-            <span 
-              v-for="tag in popularTags" 
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <h3 class="text-base font-semibold text-gray-900 mb-4">🏷️ 熱門標籤</h3>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="tag in popularTags"
               :key="tag.name"
-              class="tag-item"
+              class="bg-gray-200 hover:bg-gray-900 hover:text-white text-gray-700 px-2 py-1 rounded text-xs cursor-pointer transition-all duration-200"
               :style="{ fontSize: getTagSize(tag.count) }"
             >
               #{{ tag.name }}
@@ -160,35 +160,35 @@
         </div>
 
         <!-- 最新評論 -->
-        <div class="sidebar-widget">
-          <h3>💭 最新評論</h3>
-          <div class="recent-comments">
-            <div 
-              v-for="comment in recentComments" 
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <h3 class="text-base font-semibold text-gray-900 mb-4">💭 最新評論</h3>
+          <div class="flex flex-col gap-4">
+            <div
+              v-for="comment in recentComments"
               :key="comment.id"
-              class="comment-item"
+              class="p-3 bg-gray-50 rounded-lg"
             >
-              <div class="comment-author">{{ comment.name }}</div>
-              <div class="comment-content">"{{ getCommentExcerpt(comment.body) }}"</div>
-              <div class="comment-time">{{ formatRelativeTime(comment.createdAt) }}</div>
+              <div class="font-medium text-gray-900 text-sm mb-1">{{ comment.name }}</div>
+              <div class="text-xs text-gray-600 leading-snug mb-1">"{{ getCommentExcerpt(comment.body) }}"</div>
+              <div class="text-[0.625rem] text-gray-500">{{ formatRelativeTime(comment.createdAt) }}</div>
             </div>
           </div>
         </div>
 
         <!-- 天氣小工具 -->
-        <div class="sidebar-widget">
-          <h3>🌤️ 今日天氣</h3>
-          <div class="weather-widget">
-            <div class="weather-main">
-              <div class="weather-temp">{{ weather.temperature }}°C</div>
-              <div class="weather-desc">{{ weather.description }}</div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <h3 class="text-base font-semibold text-gray-900 mb-4">🌤️ 今日天氣</h3>
+          <div class="text-center">
+            <div class="mb-4">
+              <div class="text-3xl font-bold text-gray-900 mb-1">{{ weather.temperature }}°C</div>
+              <div class="text-sm text-gray-500">{{ weather.description }}</div>
             </div>
-            <div class="weather-details">
-              <div class="weather-item">
+            <div class="flex justify-around">
+              <div class="flex flex-col items-center gap-1 text-xs text-gray-600">
                 <span>💧</span>
                 <span>{{ weather.humidity }}%</span>
               </div>
-              <div class="weather-item">
+              <div class="flex flex-col items-center gap-1 text-xs text-gray-600">
                 <span>💨</span>
                 <span>{{ weather.windSpeed }} km/h</span>
               </div>
@@ -250,13 +250,13 @@ const formatRelativeTime = (timestamp) => {
   const now = Date.now()
   const diff = now - new Date(timestamp).getTime()
   const minutes = Math.floor(diff / 60000)
-  
+
   if (minutes < 1) return '剛剛'
   if (minutes < 60) return `${minutes} 分鐘前`
-  
+
   const hours = Math.floor(minutes / 60)
   if (hours < 24) return `${hours} 小時前`
-  
+
   const days = Math.floor(hours / 24)
   return `${days} 天前`
 }
@@ -365,13 +365,13 @@ const loadDashboardData = async () => {
       {
         id: 1,
         name: '陳小華',
-        body: '這篇文章寫得很好，學到了很多東西！',
+        body: '這篇文章寫得很好,學到了很多東西!',
         createdAt: Date.now() - 180000
       },
       {
         id: 2,
         name: '林小雨',
-        body: '感謝分享，期待更多相關內容',
+        body: '感謝分享,期待更多相關內容',
         createdAt: Date.now() - 360000
       },
       {
@@ -392,399 +392,3 @@ onMounted(() => {
   loadDashboardData()
 })
 </script>
-
-<style scoped>
-.dashboard-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.welcome-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  margin-bottom: 2rem;
-}
-
-.welcome-content h1 {
-  margin: 0 0 0.5rem;
-  font-size: 2rem;
-}
-
-.welcome-content p {
-  margin: 0;
-  opacity: 0.9;
-}
-
-.quick-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.quick-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  transition: all 0.2s;
-  backdrop-filter: blur(10px);
-}
-
-.quick-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  font-size: 2.5rem;
-  opacity: 0.8;
-}
-
-.stat-content h3 {
-  margin: 0 0 0.25rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.stat-number {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 0.25rem;
-}
-
-.stat-change {
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.stat-change.positive {
-  color: #10b981;
-}
-
-.stat-change.neutral {
-  color: #6b7280;
-}
-
-.dashboard-content {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 2rem;
-}
-
-.content-section {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.section-header h2 {
-  margin: 0;
-  color: #1f2937;
-  font-size: 1.25rem;
-}
-
-.see-all {
-  color: #667eea;
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.see-all:hover {
-  text-decoration: underline;
-}
-
-.recent-posts {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.post-item {
-  padding: 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.post-item:hover {
-  border-color: #667eea;
-  background: #f8fafc;
-}
-
-.post-meta {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.post-title {
-  margin: 0 0 0.5rem;
-  color: #1f2937;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.post-excerpt {
-  margin: 0 0 0.75rem;
-  color: #4b5563;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.post-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.user-activities {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.activity-item {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-start;
-}
-
-.activity-avatar {
-  width: 2rem;
-  height: 2rem;
-  background: #667eea;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-.activity-content {
-  flex: 1;
-}
-
-.activity-description {
-  font-size: 0.875rem;
-  color: #1f2937;
-  margin-bottom: 0.25rem;
-}
-
-.activity-target {
-  color: #667eea;
-}
-
-.activity-time {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.sidebar-widget {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-widget h3 {
-  margin: 0 0 1rem;
-  color: #1f2937;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.system-status {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.status-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.875rem;
-}
-
-.status-label {
-  color: #4b5563;
-}
-
-.status-indicator {
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.popular-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag-item {
-  background: #e5e7eb;
-  color: #374151;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tag-item:hover {
-  background: #667eea;
-  color: white;
-}
-
-.recent-comments {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.comment-item {
-  padding: 0.75rem;
-  background: #f9fafb;
-  border-radius: 0.5rem;
-}
-
-.comment-author {
-  font-weight: 500;
-  color: #1f2937;
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
-}
-
-.comment-content {
-  font-size: 0.75rem;
-  color: #4b5563;
-  line-height: 1.4;
-  margin-bottom: 0.25rem;
-}
-
-.comment-time {
-  font-size: 0.625rem;
-  color: #6b7280;
-}
-
-.weather-widget {
-  text-align: center;
-}
-
-.weather-main {
-  margin-bottom: 1rem;
-}
-
-.weather-temp {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 0.25rem;
-}
-
-.weather-desc {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.weather-details {
-  display: flex;
-  justify-content: space-around;
-}
-
-.weather-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  color: #4b5563;
-}
-
-@media (max-width: 1024px) {
-  .dashboard-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .welcome-section {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .dashboard-container {
-    padding: 1rem;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .quick-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-}
-</style>

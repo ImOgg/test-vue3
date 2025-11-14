@@ -1,144 +1,145 @@
 <template>
-  <div class="not-found-container">
-    <div class="not-found-content">
+  <div class="min-h-screen flex items-center justify-center p-8 relative bg-gray-100 overflow-hidden">
+    <div class="max-w-3xl w-full bg-white rounded-3xl p-12 shadow-2xl text-center relative z-10">
       <!-- 404 動畫區域 -->
-      <div class="error-animation">
-        <div class="error-number">
-          <span class="four">4</span>
-          <span class="zero">0</span>
-          <span class="four">4</span>
+      <div class="mb-8">
+        <div class="flex justify-center items-center gap-4 mb-8">
+          <span class="text-8xl font-bold animate-bounce text-gray-900">4</span>
+          <span class="text-8xl font-bold animate-bounce animation-delay-200 scale-110 text-gray-700">0</span>
+          <span class="text-8xl font-bold animate-bounce text-gray-900">4</span>
         </div>
-        <div class="error-illustration">
-          <div class="floating-elements">
-            <div class="element element-1">💫</div>
-            <div class="element element-2">⭐</div>
-            <div class="element element-3">🌟</div>
-            <div class="element element-4">✨</div>
+        <div class="relative h-40 my-8">
+          <div class="absolute w-full h-full">
+            <div class="element absolute top-[20%] left-[20%] text-2xl animate-float">💫</div>
+            <div class="element absolute top-[10%] right-[25%] text-2xl animate-float animation-delay-500">⭐</div>
+            <div class="element absolute bottom-[30%] left-[15%] text-2xl animate-float animation-delay-1000">🌟</div>
+            <div class="element absolute bottom-[20%] right-[20%] text-2xl animate-float animation-delay-1500">✨</div>
           </div>
-          <div class="lost-character">
-            <div class="character-face">😵‍💫</div>
-            <div class="character-body"></div>
+          <div class="lost-character absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-wobble">
+            <div class="text-6xl mb-2">😵‍💫</div>
+            <div class="w-12 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-3xl mx-auto"></div>
           </div>
         </div>
       </div>
 
       <!-- 錯誤訊息 -->
-      <div class="error-message">
-        <h1>找不到頁面</h1>
-        <h2>看起來你走錯路了！</h2>
-        <p>
+      <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">找不到頁面</h1>
+        <h2 class="text-2xl text-gray-700 mb-4 font-medium">看起來你走錯路了！</h2>
+        <p class="text-gray-600 leading-relaxed mb-8">
           很抱歉，您要尋找的頁面不存在。<br>
           可能是網址輸入錯誤，或是頁面已經被移動或刪除了。
         </p>
       </div>
 
       <!-- 建議操作 -->
-      <div class="suggestions">
-        <h3>🤔 您可以嘗試：</h3>
-        <ul class="suggestion-list">
-          <li>
-            <span class="suggestion-icon">🔍</span>
+      <div class="text-left my-8 p-6 bg-gray-50 rounded-2xl">
+        <h3 class="text-gray-900 mb-4 text-center">🤔 您可以嘗試：</h3>
+        <ul class="list-none p-0 m-0">
+          <li class="flex items-center gap-3 py-2 text-gray-700">
+            <span class="text-xl">🔍</span>
             檢查網址是否正確
           </li>
-          <li>
-            <span class="suggestion-icon">🏠</span>
+          <li class="flex items-center gap-3 py-2 text-gray-700">
+            <span class="text-xl">🏠</span>
             回到首頁重新開始
           </li>
-          <li>
-            <span class="suggestion-icon">⬅️</span>
+          <li class="flex items-center gap-3 py-2 text-gray-700">
+            <span class="text-xl">⬅️</span>
             使用瀏覽器的上一頁功能
           </li>
-          <li>
-            <span class="suggestion-icon">📧</span>
+          <li class="flex items-center gap-3 py-2 text-gray-700">
+            <span class="text-xl">📧</span>
             聯繫我們的技術支援
           </li>
         </ul>
       </div>
 
       <!-- 快速導航 -->
-      <div class="quick-navigation">
-        <h3>🚀 快速導航</h3>
-        <div class="nav-grid">
-          <router-link to="/" class="nav-card">
-            <div class="nav-icon">🏠</div>
-            <div class="nav-text">
-              <strong>首頁</strong>
-              <small>回到主頁面</small>
+      <div class="my-8">
+        <h3 class="text-gray-900 mb-6">🚀 快速導航</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <router-link to="/" class="flex flex-col items-center gap-2 p-6 bg-white border-2 border-gray-200 rounded-2xl no-underline transition-all duration-200 hover:border-gray-900 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="text-3xl">🏠</div>
+            <div class="text-center">
+              <strong class="block text-gray-900 text-sm mb-1">首頁</strong>
+              <small class="text-gray-600 text-xs">回到主頁面</small>
             </div>
           </router-link>
 
-          <router-link to="/users" class="nav-card">
-            <div class="nav-icon">👥</div>
-            <div class="nav-text">
-              <strong>用戶管理</strong>
-              <small>查看所有用戶</small>
+          <router-link to="/users" class="flex flex-col items-center gap-2 p-6 bg-white border-2 border-gray-200 rounded-2xl no-underline transition-all duration-200 hover:border-gray-900 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="text-3xl">👥</div>
+            <div class="text-center">
+              <strong class="block text-gray-900 text-sm mb-1">用戶管理</strong>
+              <small class="text-gray-600 text-xs">查看所有用戶</small>
             </div>
           </router-link>
 
-          <router-link to="/posts" class="nav-card">
-            <div class="nav-icon">📝</div>
-            <div class="nav-text">
-              <strong>文章列表</strong>
-              <small>瀏覽所有文章</small>
+          <router-link to="/posts" class="flex flex-col items-center gap-2 p-6 bg-white border-2 border-gray-200 rounded-2xl no-underline transition-all duration-200 hover:border-gray-900 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="text-3xl">📝</div>
+            <div class="text-center">
+              <strong class="block text-gray-900 text-sm mb-1">文章列表</strong>
+              <small class="text-gray-600 text-xs">瀏覽所有文章</small>
             </div>
           </router-link>
 
-          <router-link to="/dashboard" class="nav-card">
-            <div class="nav-icon">📊</div>
-            <div class="nav-text">
-              <strong>儀表板</strong>
-              <small>查看統計資料</small>
+          <router-link to="/dashboard" class="flex flex-col items-center gap-2 p-6 bg-white border-2 border-gray-200 rounded-2xl no-underline transition-all duration-200 hover:border-gray-900 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="text-3xl">📊</div>
+            <div class="text-center">
+              <strong class="block text-gray-900 text-sm mb-1">儀表板</strong>
+              <small class="text-gray-600 text-xs">查看統計資料</small>
             </div>
           </router-link>
         </div>
       </div>
 
       <!-- 操作按鈕 -->
-      <div class="action-buttons">
-        <button @click="goBack" class="btn btn-secondary">
+      <div class="flex justify-center gap-4 my-8 flex-wrap">
+        <button @click="goBack" class="px-6 py-3 rounded-lg font-medium no-underline cursor-pointer transition-all duration-200 border-0 inline-flex items-center gap-2 bg-gray-600 text-white hover:bg-gray-700">
           ⬅️ 返回上頁
         </button>
-        <router-link to="/" class="btn btn-primary">
+        <router-link to="/" class="px-6 py-3 rounded-lg font-medium no-underline cursor-pointer transition-all duration-200 border-0 inline-flex items-center gap-2 bg-gray-900 text-white hover:bg-gray-800 hover:-translate-y-0.5">
           🏠 回到首頁
         </router-link>
-        <button @click="refreshPage" class="btn btn-outline">
+        <button @click="refreshPage" class="px-6 py-3 rounded-lg font-medium no-underline cursor-pointer transition-all duration-200 inline-flex items-center gap-2 bg-transparent text-gray-900 border-2 border-gray-900 hover:bg-gray-900 hover:text-white">
           🔄 重新整理
         </button>
       </div>
 
       <!-- 搜尋功能 -->
-      <div class="search-section">
-        <h3>🔍 或者搜尋您要的內容</h3>
-        <div class="search-box">
-          <input 
+      <div class="my-8">
+        <h3 class="text-gray-900 mb-4">🔍 或者搜尋您要的內容</h3>
+        <div class="flex max-w-md mx-auto border-2 border-gray-200 rounded-lg overflow-hidden">
+          <input
             v-model="searchQuery"
-            type="text" 
+            type="text"
             placeholder="輸入關鍵字搜尋..."
             @keyup.enter="performSearch"
+            class="flex-1 px-3 py-3 border-0 outline-none text-base"
           />
-          <button @click="performSearch" class="search-btn">
+          <button @click="performSearch" class="bg-gray-900 text-white border-0 px-6 py-3 cursor-pointer transition-colors duration-200 hover:bg-gray-800">
             搜尋
           </button>
         </div>
       </div>
 
       <!-- 頁腳資訊 -->
-      <div class="error-footer">
+      <div class="mt-8 pt-8 border-t border-gray-200 text-gray-600 text-sm">
         <p>錯誤代碼: 404 | 時間: {{ currentTime }}</p>
         <p>
-          如果問題持續存在，請聯繫 
-          <a href="mailto:support@example.com">技術支援</a>
+          如果問題持續存在，請聯繫
+          <a href="mailto:support@example.com" class="text-gray-900 no-underline hover:underline">技術支援</a>
         </p>
       </div>
     </div>
 
     <!-- 背景裝飾 -->
-    <div class="background-decoration">
-      <div class="bg-circle circle-1"></div>
-      <div class="bg-circle circle-2"></div>
-      <div class="bg-circle circle-3"></div>
-      <div class="bg-shape shape-1"></div>
-      <div class="bg-shape shape-2"></div>
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+      <div class="bg-circle absolute rounded-full bg-white/10 animate-drift w-[100px] h-[100px] top-[20%] left-[10%]"></div>
+      <div class="bg-circle absolute rounded-full bg-white/10 animate-drift animation-delay-2000 w-[150px] h-[150px] top-[60%] right-[10%]"></div>
+      <div class="bg-circle absolute rounded-full bg-white/10 animate-drift animation-delay-4000 w-[80px] h-[80px] bottom-[20%] left-[60%]"></div>
+      <div class="bg-shape absolute bg-white/5 animate-rotate w-[200px] h-[200px] top-[10%] right-[20%]" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></div>
+      <div class="bg-shape absolute bg-white/5 animate-rotate w-[150px] h-[150px] bottom-[30%] left-[10%]" style="clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);"></div>
     </div>
   </div>
 </template>
@@ -185,409 +186,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.not-found-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  position: relative;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  overflow: hidden;
-}
-
-.not-found-content {
-  max-width: 800px;
-  width: 100%;
-  background: white;
-  border-radius: 2rem;
-  padding: 3rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.error-animation {
-  margin-bottom: 2rem;
-}
-
-.error-number {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.error-number span {
-  font-size: 6rem;
-  font-weight: bold;
-  animation: bounce 2s infinite;
-}
-
-.four {
-  color: #667eea;
-  animation-delay: 0s;
-}
-
-.zero {
-  color: #764ba2;
-  animation-delay: 0.2s;
-  transform: scale(1.2);
-}
-
-.error-illustration {
-  position: relative;
-  height: 150px;
-  margin: 2rem 0;
-}
-
-.floating-elements {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.element {
-  position: absolute;
-  font-size: 1.5rem;
-  animation: float 3s ease-in-out infinite;
-}
-
-.element-1 {
-  top: 20%;
-  left: 20%;
-  animation-delay: 0s;
-}
-
-.element-2 {
-  top: 10%;
-  right: 25%;
-  animation-delay: 0.5s;
-}
-
-.element-3 {
-  bottom: 30%;
-  left: 15%;
-  animation-delay: 1s;
-}
-
-.element-4 {
-  bottom: 20%;
-  right: 20%;
-  animation-delay: 1.5s;
-}
-
-.lost-character {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: wobble 2s ease-in-out infinite;
-}
-
-.character-face {
-  font-size: 4rem;
-  margin-bottom: 0.5rem;
-}
-
-.character-body {
-  width: 3rem;
-  height: 4rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 1.5rem;
-  margin: 0 auto;
-}
-
-.error-message h1 {
-  font-size: 2.5rem;
-  color: #1f2937;
-  margin: 0 0 0.5rem;
-}
-
-.error-message h2 {
-  font-size: 1.5rem;
-  color: #667eea;
-  margin: 0 0 1rem;
-  font-weight: 500;
-}
-
-.error-message p {
-  color: #6b7280;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.suggestions {
-  text-align: left;
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background: #f9fafb;
-  border-radius: 1rem;
-}
-
-.suggestions h3 {
-  color: #1f2937;
-  margin: 0 0 1rem;
-  text-align: center;
-}
-
-.suggestion-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.suggestion-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-  color: #4b5563;
-}
-
-.suggestion-icon {
-  font-size: 1.2rem;
-}
-
-.quick-navigation {
-  margin: 2rem 0;
-}
-
-.quick-navigation h3 {
-  color: #1f2937;
-  margin-bottom: 1.5rem;
-}
-
-.nav-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-}
-
-.nav-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 1rem;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.nav-card:hover {
-  border-color: #667eea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.nav-icon {
-  font-size: 2rem;
-}
-
-.nav-text {
-  text-align: center;
-}
-
-.nav-text strong {
-  display: block;
-  color: #1f2937;
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
-}
-
-.nav-text small {
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 2rem 0;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-primary {
-  background: #667eea;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #5a6fd8;
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background: #6b7280;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: #4b5563;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
-}
-
-.btn-outline:hover {
-  background: #667eea;
-  color: white;
-}
-
-.search-section {
-  margin: 2rem 0;
-}
-
-.search-section h3 {
-  color: #1f2937;
-  margin-bottom: 1rem;
-}
-
-.search-box {
-  display: flex;
-  max-width: 400px;
-  margin: 0 auto;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 0.75rem;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-}
-
-.search-btn {
-  background: #667eea;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.search-btn:hover {
-  background: #5a6fd8;
-}
-
-.error-footer {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e5e7eb;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.error-footer a {
-  color: #667eea;
-  text-decoration: none;
-}
-
-.error-footer a:hover {
-  text-decoration: underline;
-}
-
-.background-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  animation: drift 10s linear infinite;
-}
-
-.circle-1 {
-  width: 100px;
-  height: 100px;
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.circle-2 {
-  width: 150px;
-  height: 150px;
-  top: 60%;
-  right: 10%;
-  animation-delay: 2s;
-}
-
-.circle-3 {
-  width: 80px;
-  height: 80px;
-  bottom: 20%;
-  left: 60%;
-  animation-delay: 4s;
-}
-
-.bg-shape {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.05);
-  animation: rotate 15s linear infinite;
-}
-
-.shape-1 {
-  width: 200px;
-  height: 200px;
-  top: 10%;
-  right: 20%;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-
-.shape-2 {
-  width: 150px;
-  height: 150px;
-  bottom: 30%;
-  left: 10%;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-20px);
-  }
-  60% {
-    transform: translateY(-10px);
-  }
-}
-
+<style>
+/* 保留動畫 keyframes */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -630,42 +230,45 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 768px) {
-  .not-found-content {
-    padding: 2rem;
-  }
-  
-  .error-number span {
-    font-size: 4rem;
-  }
-  
-  .error-message h1 {
-    font-size: 2rem;
-  }
-  
-  .nav-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .btn {
-    width: 100%;
-    max-width: 300px;
-    justify-content: center;
-  }
+/* 動畫 class */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-@media (max-width: 480px) {
-  .not-found-content {
-    padding: 1.5rem;
-  }
-  
-  .nav-grid {
-    grid-template-columns: 1fr;
-  }
+.animate-wobble {
+  animation: wobble 2s ease-in-out infinite;
+}
+
+.animate-drift {
+  animation: drift 10s linear infinite;
+}
+
+.animate-rotate {
+  animation: rotate 15s linear infinite;
+}
+
+/* 動畫延遲 */
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-1500 {
+  animation-delay: 1.5s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
 </style>

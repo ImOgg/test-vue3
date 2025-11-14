@@ -1,35 +1,49 @@
 <template>
-  <div class="user-list-container">
+  <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
     <!-- 標題與操作按鈕 -->
-    <div class="header">
-      <h1>👥 用戶管理</h1>
-      <div class="header-actions">
-        <router-link to="/users/create" class="btn btn-primary">
-          ➕ 新增用戶
-        </router-link>
-        <button @click="refreshUsers" class="btn btn-outline" :disabled="loading">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 m-0">👥 用戶管理</h1>
+      <div class="flex gap-4 w-full sm:w-auto">
+        <Button as-child size="lg" class="flex-1 sm:flex-none">
+          <router-link to="/users/create">
+            ➕ 新增用戶
+          </router-link>
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          @click="refreshUsers"
+          :disabled="loading"
+          class="flex-1 sm:flex-none"
+        >
           {{ loading ? '載入中...' : '🔄 重新載入' }}
-        </button>
+        </Button>
       </div>
     </div>
 
     <!-- 搜尋與篩選 -->
-    <div class="filters">
-      <div class="search-box">
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+      <div class="mb-4">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="🔍 搜尋用戶名稱或信箱..."
-          class="search-input"
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-gray-500 transition-colors duration-200"
         />
       </div>
-      <div class="filter-options">
-        <select v-model="statusFilter" class="filter-select">
+      <div class="flex gap-4 flex-wrap">
+        <select
+          v-model="statusFilter"
+          class="px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+        >
           <option value="">所有狀態</option>
           <option value="active">活躍用戶</option>
           <option value="inactive">非活躍用戶</option>
         </select>
-        <select v-model="sortBy" class="filter-select">
+        <select
+          v-model="sortBy"
+          class="px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+        >
           <option value="name">按名稱排序</option>
           <option value="email">按信箱排序</option>
           <option value="age">按年齡排序</option>
@@ -39,100 +53,117 @@
     </div>
 
     <!-- 用戶統計 -->
-    <div class="stats">
-      <div class="stat-item">
-        <span class="stat-label">總用戶數</span>
-        <span class="stat-value">{{ userStats.total }}</span>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-6 rounded-lg shadow-md text-center">
+        <span class="block text-gray-500 text-sm mb-2">總用戶數</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ userStats.total }}</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">活躍用戶</span>
-        <span class="stat-value">{{ userStats.active }}</span>
+      <div class="bg-white p-6 rounded-lg shadow-md text-center">
+        <span class="block text-gray-500 text-sm mb-2">活躍用戶</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ userStats.active }}</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">非活躍用戶</span>
-        <span class="stat-value">{{ userStats.inactive }}</span>
+      <div class="bg-white p-6 rounded-lg shadow-md text-center">
+        <span class="block text-gray-500 text-sm mb-2">非活躍用戶</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ userStats.inactive }}</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">搜尋結果</span>
-        <span class="stat-value">{{ filteredUsers.length }}</span>
+      <div class="bg-white p-6 rounded-lg shadow-md text-center">
+        <span class="block text-gray-500 text-sm mb-2">搜尋結果</span>
+        <span class="block text-gray-800 text-3xl font-bold">{{ filteredUsers.length }}</span>
       </div>
     </div>
 
     <!-- 用戶列表 -->
-    <div v-if="loading" class="loading">
-      <div class="loading-spinner"></div>
-      <p>載入用戶資料中...</p>
+    <div v-if="loading" class="text-center py-12">
+      <div class="w-12 h-12 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-gray-600">載入用戶資料中...</p>
     </div>
 
-    <div v-else-if="filteredUsers.length === 0" class="empty-state">
-      <div class="empty-icon">👤</div>
-      <h3>沒有找到用戶</h3>
-      <p>{{ searchQuery ? '請嘗試不同的搜尋條件' : '開始新增第一個用戶吧！' }}</p>
-      <router-link to="/users/create" class="btn btn-primary">
-        新增用戶
-      </router-link>
+    <div v-else-if="filteredUsers.length === 0" class="text-center py-12 bg-white rounded-lg shadow-md">
+      <div class="text-6xl mb-4">👤</div>
+      <h3 class="text-xl font-semibold text-gray-800 mb-2">沒有找到用戶</h3>
+      <p class="text-gray-600 mb-6">{{ searchQuery ? '請嘗試不同的搜尋條件' : '開始新增第一個用戶吧！' }}</p>
+      <Button as-child size="lg">
+        <router-link to="/users/create">
+          新增用戶
+        </router-link>
+      </Button>
     </div>
 
-    <div v-else class="user-grid">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <div
         v-for="user in paginatedUsers"
         :key="user.id"
-        class="user-card"
+        class="bg-white rounded-lg shadow-md p-6 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative group"
         @click="viewUserDetail(user.id)"
       >
-        <div class="user-avatar">
+        <div class="w-16 h-16 bg-gray-800 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-4">
           {{ getInitials(user.name) }}
         </div>
-        <div class="user-info">
-          <h3 class="user-name">{{ user.name }}</h3>
-          <p class="user-email">{{ user.email }}</p>
-          <p class="user-age">年齡: {{ user.age }}</p>
-          <span :class="['user-status', user.isActive ? 'active' : 'inactive']">
+        <div class="text-center">
+          <h3 class="my-0 mb-2 text-gray-800 text-lg font-semibold">{{ user.name }}</h3>
+          <p class="text-gray-500 my-0 mb-2 text-sm">{{ user.email }}</p>
+          <p class="text-gray-500 my-0 mb-4 text-sm">年齡: {{ user.age }}</p>
+          <span :class="['inline-block px-2 py-1 rounded text-xs font-medium', user.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800']">
             {{ user.isActive ? '活躍' : '非活躍' }}
           </span>
         </div>
-        <div class="user-actions" @click.stop>
-          <button @click="editUser(user)" class="action-btn edit" title="編輯">
+        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" @click.stop>
+          <Button
+            variant="outline"
+            size="xs"
+            @click="editUser(user)"
+            title="編輯"
+          >
             ✏️
-          </button>
-          <button @click="toggleUserStatus(user)" class="action-btn toggle" :title="user.isActive ? '停用' : '啟用'">
+          </Button>
+          <Button
+            variant="outline"
+            size="xs"
+            @click="toggleUserStatus(user)"
+            :title="user.isActive ? '停用' : '啟用'"
+          >
             {{ user.isActive ? '⏸️' : '▶️' }}
-          </button>
-          <button @click="deleteUserLocal(user)" class="action-btn delete" title="刪除">
+          </Button>
+          <Button
+            variant="outline"
+            size="xs"
+            @click="deleteUserLocal(user)"
+            title="刪除"
+          >
             🗑️
-          </button>
+          </Button>
         </div>
       </div>
     </div>
 
     <!-- 分頁 -->
-    <div v-if="totalPages > 1" class="pagination">
-      <button
+    <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-8 flex-wrap">
+      <Button
+        variant="outline"
         @click="currentPage = Math.max(1, currentPage - 1)"
         :disabled="currentPage === 1"
-        class="page-btn"
       >
         ◀️ 上一頁
-      </button>
-      
-      <div class="page-numbers">
-        <button
+      </Button>
+
+      <div class="flex gap-1">
+        <Button
           v-for="page in visiblePages"
           :key="page"
+          :variant="page === currentPage ? 'default' : 'outline'"
           @click="currentPage = page"
-          :class="['page-btn', { active: page === currentPage }]"
         >
           {{ page }}
-        </button>
+        </Button>
       </div>
-      
-      <button
+
+      <Button
+        variant="outline"
         @click="currentPage = Math.min(totalPages, currentPage + 1)"
         :disabled="currentPage === totalPages"
-        class="page-btn"
       >
         下一頁 ▶️
-      </button>
+      </Button>
     </div>
   </div>
 </template>
@@ -141,6 +172,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserManagement } from '@/hooks/useUsers.js'
+import { Button } from '@/components/ui/button'
 
 const router = useRouter()
 
@@ -273,305 +305,3 @@ const deleteUserLocal = async (user) => {
   }
 }
 </script>
-
-<style scoped>
-.user-list-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.header h1 {
-  color: #1f2937;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.filters {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.search-box {
-  margin-bottom: 1rem;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.filter-options {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-select {
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  /* background: white; */
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.stat-item {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.stat-label {
-  display: block;
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  display: block;
-  color: #1f2937;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.loading {
-  text-align: center;
-  padding: 3rem;
-}
-
-.loading-spinner {
-  width: 3rem;
-  height: 3rem;
-  border: 3px solid #e5e7eb;
-  border-top: 3px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.user-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.user-card {
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-}
-
-.user-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.user-avatar {
-  width: 4rem;
-  height: 4rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin: 0 auto 1rem;
-}
-
-.user-info {
-  text-align: center;
-}
-
-.user-name {
-  margin: 0 0 0.5rem;
-  color: #1f2937;
-}
-
-.user-email {
-  color: #6b7280;
-  margin: 0 0 0.5rem;
-  font-size: 0.875rem;
-}
-
-.user-age {
-  color: #6b7280;
-  margin: 0 0 1rem;
-  font-size: 0.875rem;
-}
-
-.user-status {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.user-status.active {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.user-status.inactive {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.user-actions {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  display: flex;
-  gap: 0.25rem;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.user-card:hover .user-actions {
-  opacity: 1;
-}
-
-.action-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  padding: 0.25rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.action-btn:hover {
-  background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 2rem;
-}
-
-.page-btn {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #f3f4f6;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-btn.active {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-primary {
-  background: #667eea;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #5a6fd8;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
-}
-
-.btn-outline:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-</style>
