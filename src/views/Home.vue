@@ -56,15 +56,19 @@
     <div class="mt-12 bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
       <h2 class="text-3xl font-bold text-gray-900 text-center mb-6">🚀 快速操作</h2>
       <div class="flex flex-wrap justify-center gap-4">
-        <router-link to="/users" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-md">
-          👥 用戶管理
-        </router-link>
-        <router-link to="/posts" class="px-6 py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors shadow-md">
-          📝 文章管理
-        </router-link>
-        <button @click="refreshData" :disabled="loading" class="px-6 py-3 bg-white border-2 border-gray-900 text-gray-900 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
+        <Button as-child size="lg">
+          <router-link to="/users">
+            👥 用戶管理
+          </router-link>
+        </Button>
+        <Button as-child size="lg" variant="secondary">
+          <router-link to="/posts">
+            📝 文章管理
+          </router-link>
+        </Button>
+        <Button variant="outline" size="lg" @click="refreshData" :disabled="loading">
           {{ loading ? '載入中...' : '🔄 重新載入' }}
-        </button>
+        </Button>
       </div>
     </div>
   </div>
@@ -74,6 +78,7 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { usePostStore } from '@/stores/post'
+import { Button } from '@/components/ui/button'
 
 const userStore = useUserStore()
 const postStore = usePostStore()

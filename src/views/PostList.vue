@@ -4,12 +4,12 @@
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
       <h1 class="text-3xl font-bold text-gray-800">📝 文章管理</h1>
       <div class="flex gap-4">
-        <button @click="openCreateModal" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 inline-flex items-center gap-2">
+        <Button size="lg" @click="openCreateModal">
           ➕ 發表文章
-        </button>
-        <button @click="refreshPosts" class="px-6 py-3 bg-transparent text-gray-900 border-2 border-gray-900 rounded-lg font-medium hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed" :disabled="loading">
+        </Button>
+        <Button variant="outline" size="lg" @click="refreshPosts" :disabled="loading">
           {{ loading ? '載入中...' : '🔄 重新載入' }}
-        </button>
+        </Button>
       </div>
     </div>
 
@@ -73,9 +73,9 @@
       <div class="text-6xl mb-4">📝</div>
       <h3 class="text-xl font-semibold text-gray-800 mb-2">沒有找到文章</h3>
       <p class="text-gray-600 mb-6">{{ searchQuery ? '請嘗試不同的搜尋條件' : '開始發表第一篇文章吧！' }}</p>
-      <button @click="openCreateModal" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-200">
+      <Button size="lg" @click="openCreateModal">
         發表文章
-      </button>
+      </Button>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -96,12 +96,12 @@
             </div>
           </div>
           <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" @click.stop>
-            <button @click="editPost(post)" class="bg-white/90 border border-gray-200 rounded px-1 py-1 cursor-pointer text-sm transition-all duration-200 hover:bg-white hover:shadow-sm" title="編輯">
+            <Button variant="outline" size="xs" @click="editPost(post)" title="編輯">
               ✏️
-            </button>
-            <button @click="deletePost(post)" class="bg-white/90 border border-gray-200 rounded px-1 py-1 cursor-pointer text-sm transition-all duration-200 hover:bg-white hover:shadow-sm" title="刪除">
+            </Button>
+            <Button variant="outline" size="xs" @click="deletePost(post)" title="刪除">
               🗑️
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -122,32 +122,32 @@
 
     <!-- 分頁 -->
     <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-8">
-      <button
+      <Button
+        variant="outline"
         @click="currentPage = Math.max(1, currentPage - 1)"
         :disabled="currentPage === 1"
-        class="px-3 py-2 border border-gray-300 bg-white rounded-md cursor-pointer transition-all duration-200 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         ◀️ 上一頁
-      </button>
+      </Button>
 
       <div class="flex gap-1">
-        <button
+        <Button
           v-for="page in visiblePages"
           :key="page"
+          :variant="page === currentPage ? 'default' : 'outline'"
           @click="currentPage = page"
-          :class="['px-3 py-2 border border-gray-300 bg-white rounded-md cursor-pointer transition-all duration-200 hover:bg-gray-100', { 'bg-gray-900 text-white border-gray-900 hover:bg-gray-900': page === currentPage }]"
         >
           {{ page }}
-        </button>
+        </Button>
       </div>
 
-      <button
+      <Button
+        variant="outline"
         @click="currentPage = Math.min(totalPages, currentPage + 1)"
         :disabled="currentPage === totalPages"
-        class="px-3 py-2 border border-gray-300 bg-white rounded-md cursor-pointer transition-all duration-200 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         下一頁 ▶️
-      </button>
+      </Button>
     </div>
 
     <!-- 文章表單 Modal -->
@@ -209,12 +209,12 @@
           </div>
 
           <div class="flex gap-4 justify-end mt-8">
-            <button type="button" @click="closeModal" class="px-6 py-3 bg-transparent text-gray-900 border-2 border-gray-900 rounded-lg font-medium hover:bg-gray-900 hover:text-white transition-all duration-200">
+            <Button type="button" variant="outline" size="lg" @click="closeModal">
               取消
-            </button>
-            <button type="submit" class="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed" :disabled="submitting">
+            </Button>
+            <Button type="submit" size="lg" :disabled="submitting">
               {{ submitting ? '處理中...' : (isEditing ? '更新' : '發表') }}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -228,6 +228,7 @@ import { useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useUserStore } from '@/stores/user'
 import { usePostForm } from '@/composables/usePostForm'
+import { Button } from '@/components/ui/button'
 
 const router = useRouter()
 const postStore = usePostStore()
