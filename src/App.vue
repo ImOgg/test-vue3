@@ -80,11 +80,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 // 響應式資料
-const isMenuOpen = ref(false)
+const isMenuOpen = ref<boolean>(false)
 
 // 方法
 const toggleMenu = () => {
@@ -94,6 +94,7 @@ const toggleMenu = () => {
 const closeMenu = () => {
   isMenuOpen.value = false
 }
+
 </script>
 
 <style>
