@@ -57,9 +57,6 @@
         <transition
           name="fade"
           mode="out-in"
-          @before-enter="onBeforeEnter"
-          @enter="onEnter"
-          @leave="onLeave"
         >
           <component :is="Component" :key="route.path" />
         </transition>
