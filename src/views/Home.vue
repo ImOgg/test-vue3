@@ -1,9 +1,8 @@
 <template>
   <div class="max-w-6xl mx-auto px-6 py-16">
-    <div
-      class="flex flex-col items-center gap-8 py-16 px-6 bg-gray-100 rounded-2xl shadow-lg border border-gray-200">
+    <div class="flex flex-col items-center gap-8 py-16 px-6 bg-gray-100 rounded-2xl shadow-lg border border-gray-200">
       <h1 class="text-5xl font-extrabold text-gray-900 flex items-center gap-2">
-        🏗️ <span>Vue 3</span>
+         <span>Vue 3</span>
       </h1>
 
       <p class="text-gray-600 text-lg text-center max-w-xl">
@@ -31,22 +30,22 @@
 
     <!-- 核心功能 -->
     <div class="mt-12">
-      <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">🎯 核心功能</h2>
+      <h2 class="text-3xl font-bold text-gray-900 text-center mb-8"> 核心功能</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">🛡️ 資料驗證</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2"> 資料驗證</h3>
           <p class="text-gray-600">使用 Zod 進行雙重驗證保護</p>
         </div>
         <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">📦 狀態管理</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2"> 狀態管理</h3>
           <p class="text-gray-600">Pinia 響應式狀態管理</p>
         </div>
         <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">🔧 分層架構</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2"> 分層架構</h3>
           <p class="text-gray-600">6 層清晰的架構</p>
         </div>
         <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">🚀 高效開發</h3>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2"> 高效開發</h3>
           <p class="text-gray-600">可複用的 Composable 邏輯</p>
         </div>
       </div>
@@ -54,20 +53,20 @@
 
     <!-- 快速操作 -->
     <div class="mt-12 bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-      <h2 class="text-3xl font-bold text-gray-900 text-center mb-6">🚀 快速操作</h2>
+      <h2 class="text-3xl font-bold text-gray-900 text-center mb-6"> 快速操作</h2>
       <div class="flex flex-wrap justify-center gap-4">
-        <Button as-child size="lg">
+        <Button as-child size="lg" variant="outline">
           <router-link to="/users">
-            👥 用戶管理
+            用戶管理
           </router-link>
         </Button>
-        <Button as-child size="lg" variant="secondary">
+        <Button as-child size="lg" variant="outline">
           <router-link to="/posts">
-            📝 文章管理
+            文章管理
           </router-link>
         </Button>
         <Button variant="outline" size="lg" @click="refreshData" :disabled="loading">
-          {{ loading ? '載入中...' : '🔄 重新載入' }}
+          {{ loading ? '載入中...' : ' 重新載入' }}
         </Button>
       </div>
     </div>
@@ -102,4 +101,3 @@ onMounted(() => {
   refreshData()
 })
 </script>
-
