@@ -1,16 +1,16 @@
 <template>
   <div class="max-w-7xl mx-auto p-4 md:p-8">
     <!-- 歡迎區塊 -->
-    <div class="flex flex-col lg:flex-row justify-between items-center bg-gray-900 text-white p-6 md:p-8 rounded-2xl mb-6 md:mb-8 gap-4 lg:gap-0">
+    <div class="flex flex-col lg:flex-row justify-between items-center bg-gray-100 text-white p-6 md:p-8 rounded-2xl mb-6 md:mb-8 gap-4 lg:gap-0">
       <div class="text-center lg:text-left">
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">👋 歡迎回來,{{ currentUser?.name || '用戶' }}!</h1>
-        <p class="opacity-90">這是您的專屬儀表板,查看最新動態與重要資訊</p>
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 text-gray-500">👋 歡迎回來,{{ currentUser?.name || '用戶' }}!</h1>
+        <p class="text-gray-500">這是您的專屬儀表板,查看最新動態與重要資訊</p>
       </div>
       <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-        <router-link to="/users/create" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center">
+        <router-link to="/users/create" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-gray-500 px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center">
           ➕ 新增用戶
         </router-link>
-        <router-link to="/posts" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center">
+        <router-link to="/posts" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-gray-500 px-6 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 text-center">
           📝 發表文章
         </router-link>
       </div>
