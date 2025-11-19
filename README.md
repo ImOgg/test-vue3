@@ -853,11 +853,12 @@ VITE_API_URL=http://localhost:3001
 - [ ] 添加 PWA 支援 (離線能力)
 - [ ] 國際化支援 (Vue I18n)
 - [ ] 主題切換功能 (深色模式)
-- [ ] React Query 遷移指南
+- [ ] Vue Query 遷移指南
 - [ ] Suspense 和 ErrorBoundary 整合
 - [ ] 無限滾動和虛擬列表
 - [ ] WebSocket 即時數據同步
 - [ ] Storybook 組件文檔
+- [ ] nextTick 使用指南 (Vue.nextTick)：實作場景、與 DOM 更新 / 微任務關聯、搭配 Suspense / transition 的實作範例
 
 ### 🎓 學習資源
 - [ ] Vue Query 最佳實踐文檔
