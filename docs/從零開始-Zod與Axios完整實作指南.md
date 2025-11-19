@@ -1,26 +1,149 @@
-# 從零開始：Zod + Axios 完整實作指南
+# 從零開始：Zod + Axios 完整實作指南（TypeScript 版）
 
-> 本指南將帶您從安裝到開發功能，完整實作 Zod 資料驗證 + Axios 攔截器
+> 本指南將帶您從安裝到開發功能，完整實作 Zod 資料驗證 + Axios 攔截器（使用 TypeScript）
 
 ## 📚 目錄
 
-1. [前置知識](#前置知識)
-2. [第一階段：安裝 Zod](#第一階段安裝-zod)
-3. [第二階段：創建基礎 Schema](#第二階段創建基礎-schema)
-4. [第三階段：Zod 進階用法](#第三階段zod-進階用法)
-5. [第四階段：設置 Axios 攔截器](#第四階段設置-axios-攔截器)
-6. [第五階段：整合 API 層](#第五階段整合-api-層)
-7. [第六階段：開發完整功能](#第六階段開發完整功能產品管理-crud)
-8. [驗收測試](#驗收測試)
+1. [快速開始：建議學習順序](#快速開始建議學習順序) ⭐
+2. [前置知識](#前置知識)
+3. [第零階段：安裝 TypeScript 執行工具](#第零階段安裝-typescript-執行工具)
+4. [第一階段：安裝 Zod](#第一階段安裝-zod)
+5. [第二階段：創建基礎 Schema](#第二階段創建基礎-schema)
+6. [第三階段：Zod 進階用法](#第三階段zod-進階用法)
+7. [第四階段：設置 Axios 攔截器](#第四階段設置-axios-攔截器)
+8. [第五階段：整合 API 層](#第五階段整合-api-層)
+9. [第六階段：開發完整功能](#第六階段開發完整功能產品管理-crud)
+10. [驗收測試](#驗收測試)
+
+---
+
+## 快速開始：建議學習順序
+
+### ⚠️ 重要提醒：為什麼要先建立 Axios？
+
+雖然這份文件的章節順序是「先 Zod 後 Axios」，但**實際開發和學習時，建議先建立 Axios 攔截器！**
+
+### 🎯 建議的學習路徑
+
+```
+1️⃣ TypeScript 執行環境 (tsx)
+    ↓
+2️⃣ Axios 攔截器設置         ← 先建立基礎設施
+    ↓
+3️⃣ Zod Schema 定義          ← 有了 request 才能實際測試
+    ↓
+4️⃣ 整合 API 層              ← 結合兩者的力量
+    ↓
+5️⃣ 開發完整功能
+```
+
+### 💡 為什麼 Axios 要先建？
+
+#### 1. **Axios 是基礎設施，Zod 是驗證工具**
+
+```typescript
+// ❌ 沒有 Axios，你要這樣測試 Zod（很不實際）
+const mockData = { id: 1, name: 'Test' }
+const result = userSchema.parse(mockData)
+
+// ✅ 有了 Axios，可以用真實 API 測試
+const { data } = await request.get('/users/1')
+const user = userSchema.parse(data)  // 測試真實數據！
+```
+
+#### 2. **理解 `request.get()` 是什麼**
+
+在後面的章節中，你會看到很多 `request.get()` 的用法：
+
+```typescript
+// 這個 request 是什麼？從哪來的？
+const response = await request.get('/users')
+```
+
+**答案：`request` 是我們用 `axios.create()` 創建的自定義實例**
+
+如果還沒建立 Axios，看到這些代碼會很困惑：
+- 為什麼不用 `fetch()`？
+- 為什麼不用 `axios.get()`？
+- `request` 是什麼？
+
+#### 3. **先有房子，再裝潢**
+
+| 比喻 | Axios | Zod |
+|------|-------|-----|
+| 🏗️ | 房子的結構（HTTP 通訊基礎） | 室內裝潢（數據驗證） |
+| 📦 | 提供 request 實例 | 使用 request 去測試 |
+| 🔧 | baseURL、interceptors、token | 驗證 API 回傳的數據 |
+| ⏰ | 先建立 | 後使用 |
+
+沒有 Axios 的 `request` 實例，Zod 的練習只能用假數據，缺乏實戰感。
+
+#### 4. **實際工作流程也是這樣**
+
+```typescript
+// 第一步：建立 HTTP 通訊工具（Axios）
+export const request = axios.create({
+  baseURL: 'http://localhost:3001',
+  timeout: 5000
+})
+
+// 第二步：定義數據結構（Zod）
+export const userSchema = z.object({
+  id: z.number(),
+  name: z.string()
+})
+
+// 第三步：結合使用
+export const getUser = async (id: number) => {
+  const { data } = await request.get(`/users/${id}`)  // 用 Axios 取資料
+  return userSchema.parse(data)                       // 用 Zod 驗證資料
+}
+```
+
+### 📖 建議的閱讀順序
+
+如果你是第一次學習，建議這樣讀：
+
+1. ✅ 先讀 [第零階段：安裝 tsx](#第零階段安裝-typescript-執行工具)
+2. ✅ **跳到 [第四階段：設置 Axios 攔截器](#第四階段設置-axios-攔截器)** ← 先建立基礎設施
+3. ✅ 回到 [第一階段：安裝 Zod](#第一階段安裝-zod)
+4. ✅ 繼續 [第二階段：創建基礎 Schema](#第二階段創建基礎-schema)
+5. ✅ 繼續 [第三階段：Zod 進階用法](#第三階段zod-進階用法)
+6. ✅ 繼續 [第五階段：整合 API 層](#第五階段整合-api-層)
+7. ✅ 完成 [第六階段：開發完整功能](#第六階段開發完整功能產品管理-crud)
+
+### 🤔 為什麼文件不重新排序？
+
+你可能會問：既然 Axios 要先建，為什麼不把章節順序改掉？
+
+**原因：**
+- 📝 文件名稱是「Zod + Axios」，Zod 是主角
+- 📚 教學邏輯上，先講概念（Zod）再講應用（Axios）也合理
+- 🔄 但實作時，反過來更順暢
+
+**所以：這個「快速開始」章節就是要提醒你最佳實踐路徑！**
 
 ---
 
 ## 前置知識
 
 ### 為什麼需要 Zod？
-- **資料驗證**：確保 API 回傳的資料符合預期格式
-- **類型安全**：在 JavaScript 中獲得類似 TypeScript 的類型檢查
+- **運行時驗證**：TypeScript 只在編譯時檢查，Zod 在執行時驗證
+- **資料安全**：確保 API 回傳的資料符合預期格式
+- **類型推導**：從 Zod schema 自動推導 TypeScript 類型
 - **錯誤提示**：清楚的驗證錯誤訊息，方便除錯
+
+### TypeScript vs Zod
+
+| 特性 | TypeScript | Zod |
+|------|-----------|-----|
+| 檢查時機 | 編譯時 | 運行時 |
+| 驗證 API 數據 | ❌ | ✅ |
+| 驗證用戶輸入 | ❌ | ✅ |
+| 類型推導 | ✅ | ✅ |
+| 編譯後存在 | ❌ | ✅ |
+
+**最佳實踐：TypeScript + Zod 一起用！**
 
 ### 為什麼需要 Axios 攔截器？
 - **統一配置**：所有 API 請求使用相同的 baseURL、timeout
@@ -30,9 +153,46 @@
 ### 學習目標
 完成本指南後，您將能夠：
 - ✅ 使用 Zod 定義和驗證資料結構
+- ✅ 從 Zod 推導 TypeScript 類型
 - ✅ 設置 Axios 攔截器處理請求和回應
-- ✅ 整合 Zod + Axios 建立完整的 API 層
+- ✅ 整合 Zod + Axios + TypeScript 建立完整的 API 層
 - ✅ 開發一個完整的 CRUD 功能（產品管理）
+
+---
+
+## 第零階段：安裝 TypeScript 執行工具
+
+### 為什麼需要 tsx？
+
+Node.js 無法直接執行 TypeScript，需要工具幫忙：
+- **tsx** - 最簡單快速（推薦）
+- ts-node - 傳統方案
+- tsc 編譯後執行 - 麻煩
+
+### 安裝 tsx
+
+```bash
+npm install -D tsx
+```
+
+### 驗證安裝
+
+創建測試檔案 `src/test-tsx.ts`：
+
+```typescript
+const message: string = 'tsx 安裝成功！'
+console.log('✅', message)
+```
+
+執行：
+```bash
+npx tsx src/test-tsx.ts
+```
+
+**預期輸出：**
+```
+✅ tsx 安裝成功！
+```
 
 ---
 
@@ -52,15 +212,18 @@ npm install zod
 {
   "dependencies": {
     "zod": "^3.x.x"
+  },
+  "devDependencies": {
+    "tsx": "^4.x.x"
   }
 }
 ```
 
 ### 步驟 3：建立測試檔案
 
-創建 `src/test-zod-basic.js` 來測試 Zod 是否正常運作：
+創建 `src/test-zod-basic.ts` 來測試 Zod 是否正常運作：
 
-```javascript
+```typescript
 import { z } from 'zod'
 
 // 定義一個簡單的 schema
@@ -69,8 +232,11 @@ const userSchema = z.object({
   age: z.number()
 })
 
+// 從 schema 推導 TypeScript 類型
+type User = z.infer<typeof userSchema>
+
 // 測試驗證
-const validData = { name: 'John', age: 25 }
+const validData: User = { name: 'John', age: 25 }
 const result = userSchema.parse(validData)
 
 console.log('✅ Zod 安裝成功！', result)
@@ -78,7 +244,7 @@ console.log('✅ Zod 安裝成功！', result)
 
 執行測試：
 ```bash
-node src/test-zod-basic.js
+npx tsx src/test-zod-basic.ts
 ```
 
 **預期結果：**
@@ -94,11 +260,11 @@ node src/test-zod-basic.js
 
 ### 步驟 1：創建 Schema 檔案
 
-創建 `src/services/schema/product.js`
+創建 `src/services/schema/product.ts`
 
 ### 步驟 2：定義產品 Schema
 
-```javascript
+```typescript
 import { z } from 'zod'
 
 /**
@@ -128,9 +294,195 @@ export const productSchema = z.object({
   // 分類 - 必須是指定的選項之一
   category: z.enum(['electronics', 'clothing', 'food', 'other'])
 })
+
+// ✨ 從 Zod schema 推導 TypeScript 類型
+export type Product = z.infer<typeof productSchema>
 ```
 
-### 步驟 3：理解每個驗證方法
+### 步驟 3：理解 `z.infer<>`
+
+**這是 TypeScript + Zod 的核心優勢！**
+
+```typescript
+// 定義 schema
+const productSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  price: z.number()
+})
+
+// 自動推導類型（不用手動寫！）
+type Product = z.infer<typeof productSchema>
+
+// Product 等同於：
+// {
+//   id: number
+//   name: string
+//   price: number
+// }
+```
+
+**好處：**
+- ✅ 單一來源：只定義 schema，類型自動推導
+- ✅ 永不過期：schema 改了，類型自動更新
+- ✅ 運行時 + 編譯時雙重保護
+
+### 步驟 3.5：TypeScript vs JavaScript 的關鍵差異
+
+**重要觀察：Schema 定義看起來一樣！**
+
+您可能會發現，schema 定義在 TypeScript 和 JavaScript 中幾乎一模一樣：
+
+```javascript
+// JavaScript 版本
+export const productSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1, '產品名稱不能為空'),
+  price: z.number().min(0, '價格不能為負數')
+})
+```
+
+```typescript
+// TypeScript 版本
+export const productSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1, '產品名稱不能為空'),
+  price: z.number().min(0, '價格不能為負數')
+})
+```
+
+**確實一樣！** 因為 Zod 本身就是 JavaScript 庫，定義 schema 時不需要 TypeScript。
+
+---
+
+#### 💡 但關鍵差異在「使用」的時候
+
+**1. 類型推導**
+
+JavaScript：
+```javascript
+// ❌ 沒有類型，只能靠 JSDoc 註解
+/**
+ * @typedef {Object} Product
+ * @property {number} id
+ * @property {string} name
+ * @property {number} price
+ * // ... 要手動寫所有欄位
+ */
+
+// 使用時沒有類型提示
+const product = { id: 1, name: 'iPhone' }
+product.price  // ⚠️ 沒有自動完成
+```
+
+TypeScript：
+```typescript
+// ✅ 一行搞定，自動推導所有類型
+export type Product = z.infer<typeof productSchema>
+
+// 使用時有完整類型提示
+const product: Product = { id: 1, name: 'iPhone' }
+product.price  // ✅ 自動完成！編輯器會提示所有欄位
+```
+
+**2. 函數參數和返回值**
+
+JavaScript：
+```javascript
+// ❌ 沒有類型檢查
+export function parseProduct(data) {
+  return productSchema.parse(data)
+}
+
+// 使用時可能出錯
+const result = parseProduct({ id: 'abc' })
+result.namee  // ⚠️ 打錯字也不會提示
+```
+
+TypeScript：
+```typescript
+// ✅ 完整類型檢查
+export function parseProduct(data: unknown): Product {
+  return productSchema.parse(data)
+}
+
+// 使用時有保護
+const result = parseProduct({ id: 'abc' })
+result.namee  // ❌ TypeScript 立即報錯：Property 'namee' does not exist
+```
+
+**3. API 層使用**
+
+JavaScript：
+```javascript
+export const productAPI = {
+  // ❌ 沒有類型提示
+  async getAll() {
+    const response = await request.get('/products')
+    return parseProducts(response.data)
+  },
+
+  async create(productData) {  // ⚠️ productData 是什麼？不知道
+    return parseProduct(response.data)
+  }
+}
+
+// 使用時
+const products = await productAPI.getAll()
+products[0].pricee  // ⚠️ 打錯字不會提示
+```
+
+TypeScript：
+```typescript
+export const productAPI = {
+  // ✅ 完整類型定義
+  async getAll(): Promise<Product[]> {
+    const response = await request.get('/products')
+    return parseProducts(response.data)
+  },
+
+  async create(productData: CreateProduct): Promise<Product> {
+    // ✅ TypeScript 知道 productData 有哪些欄位
+    return parseProduct(response.data)
+  }
+}
+
+// 使用時
+const products = await productAPI.getAll()
+products[0].pricee  // ❌ TypeScript 立即報錯
+products[0].price   // ✅ 自動完成
+```
+
+#### 📊 完整對比表
+
+| 場景 | JavaScript | TypeScript |
+|------|-----------|-----------|
+| **Schema 定義** | ✅ 一樣 | ✅ 一樣 |
+| **類型推導** | ❌ 需要手動寫 JSDoc | ✅ `z.infer<>` 自動推導 |
+| **編輯器提示** | ⚠️ 有限 | ✅ 完整自動完成 |
+| **函數類型** | ❌ 沒有 | ✅ 參數和返回值都有 |
+| **錯誤檢查時機** | ❌ 只在運行時 | ✅ 編譯時 + 運行時 |
+| **重構安全性** | ❌ 容易出錯 | ✅ 修改後立即知道影響範圍 |
+| **打錯字檢測** | ❌ 不會提示 | ✅ 立即報錯 |
+
+#### 🎯 總結
+
+**Schema 定義確實一樣，但關鍵差異在使用時：**
+
+- **JavaScript**：只有運行時驗證（Zod）
+- **TypeScript**：編譯時 + 運行時雙重驗證（TypeScript + Zod）
+
+**最佳比喻：**
+- Zod schema = **運行時的守衛**（JS 和 TS 都有）
+- TypeScript 類型 = **編譯時的守衛**（只有 TS 有）
+
+**一起用 = 雙重保護！** 💪
+
+TypeScript 能讓您在**寫代碼時**就發現錯誤，而不是等到**執行時**才發現！
+
+---
+
+### 步驟 4：理解每個驗證方法
 
 | 方法 | 說明 | 範例 |
 |------|------|------|
@@ -144,16 +496,16 @@ export const productSchema = z.object({
 | `.default(value)` | 預設值 | 沒提供時使用預設值 |
 | `.enum([...])` | 列舉選項 | 必須是指定選項之一 |
 
-### 步驟 4：測試 Schema
+### 步驟 5：測試 Schema
 
-創建 `src/test-product-schema.js`：
+創建 `src/test-product-schema.ts`：
 
-```javascript
-import { productSchema } from './services/schema/product.js'
+```typescript
+import { productSchema, type Product } from './services/schema/product'
 
 // 測試 1：驗證成功
 console.log('=== 測試 1：有效資料 ===')
-const validProduct = {
+const validProduct: Product = {
   id: 1,
   name: 'iPhone 15',
   price: 30000,
@@ -166,7 +518,7 @@ const validProduct = {
 try {
   const result = productSchema.parse(validProduct)
   console.log('✅ 驗證成功！', result)
-} catch (error) {
+} catch (error: any) {
   console.log('❌ 驗證失敗', error.errors)
 }
 
@@ -181,9 +533,9 @@ const invalidProduct1 = {
 
 try {
   productSchema.parse(invalidProduct1)
-} catch (error) {
+} catch (error: any) {
   console.log('❌ 驗證錯誤：')
-  error.errors.forEach(err => {
+  error.errors.forEach((err: any) => {
     console.log(`  - ${err.path.join('.')}: ${err.message}`)
   })
 }
@@ -200,9 +552,9 @@ const invalidProduct2 = {
 
 try {
   productSchema.parse(invalidProduct2)
-} catch (error) {
+} catch (error: any) {
   console.log('❌ 驗證錯誤：')
-  error.errors.forEach(err => {
+  error.errors.forEach((err: any) => {
     console.log(`  - ${err.path.join('.')}: ${err.message}`)
   })
 }
@@ -210,7 +562,7 @@ try {
 
 執行測試：
 ```bash
-node src/test-product-schema.js
+npx tsx src/test-product-schema.ts
 ```
 
 **預期結果：**
@@ -242,13 +594,16 @@ node src/test-product-schema.js
 
 **使用場景：** 新增資料時，不需要提供 `id`（由後端自動產生）
 
-```javascript
+```typescript
 // 基於 productSchema，但排除 id 欄位
 export const createProductSchema = productSchema.omit({ id: true })
 
+// 推導類型（自動排除 id）
+export type CreateProduct = z.infer<typeof createProductSchema>
+
 // 使用範例
-const newProduct = {
-  // id: 1,  ← 不需要提供 id
+const newProduct: CreateProduct = {
+  // id: 1,  ← 不需要提供 id，TypeScript 會報錯！
   name: 'iPad Pro',
   price: 25000,
   stock: 30,
@@ -262,18 +617,21 @@ createProductSchema.parse(newProduct) // ✅ 驗證成功
 
 **使用場景：** 更新資料時，只需要提供要修改的欄位
 
-```javascript
+```typescript
 // 所有欄位都變成可選的
 export const updateProductSchema = productSchema.partial().omit({ id: true })
 
+// 推導類型（所有欄位都是 optional）
+export type UpdateProduct = z.infer<typeof updateProductSchema>
+
 // 使用範例 1：只更新價格
-const update1 = {
+const update1: UpdateProduct = {
   price: 28000
 }
 updateProductSchema.parse(update1) // ✅ 驗證成功
 
 // 使用範例 2：更新多個欄位
-const update2 = {
+const update2: UpdateProduct = {
   price: 28000,
   stock: 100,
   description: '新版本'
@@ -285,12 +643,16 @@ updateProductSchema.parse(update2) // ✅ 驗證成功
 
 **使用場景：** 獲取多個產品時，驗證整個陣列
 
-```javascript
+```typescript
 // 產品列表 schema
 export const productListSchema = z.array(productSchema)
 
+// 推導類型
+export type ProductList = z.infer<typeof productListSchema>
+// 等同於 Product[]
+
 // 使用範例
-const productList = [
+const productList: ProductList = [
   { id: 1, name: 'iPhone', price: 30000, stock: 50, category: 'electronics', isActive: true },
   { id: 2, name: 'iPad', price: 20000, stock: 30, category: 'electronics', isActive: true }
 ]
@@ -302,7 +664,7 @@ productListSchema.parse(productList) // ✅ 驗證成功
 
 **使用場景：** 只需要部分欄位時
 
-```javascript
+```typescript
 // 只保留 id, name, price
 export const productSummarySchema = productSchema.pick({
   id: true,
@@ -310,8 +672,11 @@ export const productSummarySchema = productSchema.pick({
   price: true
 })
 
+// 推導類型
+export type ProductSummary = z.infer<typeof productSummarySchema>
+
 // 使用範例
-const summary = {
+const summary: ProductSummary = {
   id: 1,
   name: 'iPhone',
   price: 30000
@@ -328,16 +693,18 @@ productSummarySchema.parse(summary) // ✅ 驗證成功
 - 統一錯誤處理
 - 方便重複使用
 
-```javascript
+```typescript
 /**
  * 解析單個產品資料
- * @param {any} data - API 回傳的原始資料
- * @returns {Product} - 驗證後的產品物件
+ * @param data - API 回傳的原始資料
+ * @returns 驗證後的產品物件
  */
-export const parseProduct = (data) => {
+export function parseProduct(data: unknown): Product {
   // 資料轉換：確保 ID 是數字
-  if (data && typeof data.id === 'string') {
-    data.id = parseInt(data.id, 10)
+  if (data && typeof data === 'object' && 'id' in data) {
+    if (typeof data.id === 'string') {
+      (data as any).id = parseInt(data.id, 10)
+    }
   }
 
   // 驗證並回傳
@@ -346,16 +713,16 @@ export const parseProduct = (data) => {
 
 /**
  * 解析產品列表
- * @param {any} data - API 回傳的原始資料陣列
- * @returns {Product[]} - 驗證後的產品陣列
+ * @param data - API 回傳的原始資料陣列
+ * @returns 驗證後的產品陣列
  */
-export const parseProducts = (data) => {
+export function parseProducts(data: unknown): Product[] {
   if (!Array.isArray(data)) {
     throw new Error('資料必須是陣列格式')
   }
 
   // 轉換所有產品的 ID
-  const processedData = data.map(product => {
+  const processedData = data.map((product: any) => {
     if (product && typeof product.id === 'string') {
       product.id = parseInt(product.id, 10)
     }
@@ -369,10 +736,14 @@ export const parseProducts = (data) => {
 
 ### 完整的 Schema 檔案
 
-更新 `src/services/schema/product.js`：
+更新 `src/services/schema/product.ts`：
 
-```javascript
+```typescript
 import { z } from 'zod'
+
+// ============================================
+// Schema 定義
+// ============================================
 
 // 基本產品 schema
 export const productSchema = z.object({
@@ -401,20 +772,35 @@ export const productSummarySchema = productSchema.pick({
   price: true
 })
 
+// ============================================
+// TypeScript 類型（自動推導）
+// ============================================
+
+export type Product = z.infer<typeof productSchema>
+export type CreateProduct = z.infer<typeof createProductSchema>
+export type UpdateProduct = z.infer<typeof updateProductSchema>
+export type ProductList = z.infer<typeof productListSchema>
+export type ProductSummary = z.infer<typeof productSummarySchema>
+
+// ============================================
 // 解析函數
-export const parseProduct = (data) => {
-  if (data && typeof data.id === 'string') {
-    data.id = parseInt(data.id, 10)
+// ============================================
+
+export function parseProduct(data: unknown): Product {
+  if (data && typeof data === 'object' && 'id' in data) {
+    if (typeof data.id === 'string') {
+      (data as any).id = parseInt(data.id, 10)
+    }
   }
   return productSchema.parse(data)
 }
 
-export const parseProducts = (data) => {
+export function parseProducts(data: unknown): Product[] {
   if (!Array.isArray(data)) {
     throw new Error('資料必須是陣列格式')
   }
 
-  const processedData = data.map(product => {
+  const processedData = data.map((product: any) => {
     if (product && typeof product.id === 'string') {
       product.id = parseInt(product.id, 10)
     }
@@ -423,6 +809,72 @@ export const parseProducts = (data) => {
 
   return productListSchema.parse(processedData)
 }
+```
+
+### 測試進階用法
+
+創建 `src/test-zod-advanced.ts`：
+
+```typescript
+import {
+  productSchema,
+  createProductSchema,
+  updateProductSchema,
+  productListSchema,
+  parseProduct,
+  parseProducts,
+  type Product,
+  type CreateProduct,
+  type UpdateProduct
+} from './services/schema/product'
+
+console.log('🧪 測試 Zod 進階用法\n')
+
+// 測試 1：.omit()
+console.log('📝 測試 1：.omit() - 新增產品（不需要 id）')
+const newProduct: CreateProduct = {
+  name: 'iPad Pro',
+  price: 25000,
+  stock: 30,
+  category: 'electronics'
+}
+console.log('✅ 通過', createProductSchema.parse(newProduct))
+
+// 測試 2：.partial()
+console.log('\n📝 測試 2：.partial() - 更新產品（部分欄位）')
+const update: UpdateProduct = {
+  price: 28000,
+  stock: 100
+}
+console.log('✅ 通過', updateProductSchema.parse(update))
+
+// 測試 3：.array()
+console.log('\n📝 測試 3：.array() - 產品列表')
+const products = parseProducts([
+  { id: 1, name: 'iPhone', price: 30000, stock: 50, category: 'electronics', isActive: true },
+  { id: 2, name: 'iPad', price: 20000, stock: 30, category: 'electronics', isActive: true }
+])
+console.log('✅ 通過', `找到 ${products.length} 個產品`)
+
+// 測試 4：parseProduct（字串 ID 轉數字）
+console.log('\n📝 測試 4：parseProduct - 轉換字串 ID')
+const productWithStringId = {
+  id: '123',  // 字串
+  name: 'MacBook',
+  price: 50000,
+  stock: 20,
+  category: 'electronics',
+  isActive: true
+}
+const parsed = parseProduct(productWithStringId)
+console.log('✅ 通過', `ID 類型：${typeof parsed.id}`, parsed)
+
+console.log('\n✅ 所有測試完成！')
+```
+
+執行：
+```bash
+npx tsx src/test-zod-advanced.ts
 ```
 
 ---
@@ -449,10 +901,10 @@ npm install axios
 
 ### 步驟 2：創建 Axios 實例
 
-創建 `src/services/request.js`：
+創建 `src/services/request.ts`：
 
-```javascript
-import axios from 'axios'
+```typescript
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios'
 
 /**
  * 為什麼要用 axios.create()？
@@ -460,8 +912,9 @@ import axios from 'axios'
  * 1. 獨立配置：不影響全域的 axios
  * 2. 統一管理：所有 API 請求使用同一個配置
  * 3. 攔截器隔離：這個實例的攔截器不會影響其他地方
+ * 4. TypeScript 類型安全
  */
-export const request = axios.create({
+export const request: AxiosInstance = axios.create({
   baseURL: 'http://localhost:3001',  // API 伺服器位址
   timeout: 5000,                      // 5 秒超時
   headers: {
@@ -472,9 +925,9 @@ export const request = axios.create({
 
 ### 步驟 3：加上請求攔截器
 
-在 `src/services/request.js` 中加上：
+在 `src/services/request.ts` 中加上：
 
-```javascript
+```typescript
 /**
  * 請求攔截器
  *
@@ -482,7 +935,7 @@ export const request = axios.create({
  * 用途：自動加上 token、記錄日誌等
  */
 request.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     // 1. 從 localStorage 取得 token
     const token = localStorage.getItem('token')
 
@@ -503,7 +956,7 @@ request.interceptors.request.use(
     // 4. 必須回傳 config
     return config
   },
-  (error) => {
+  (error: AxiosError) => {
     // 請求發送失敗（例如：網路斷線）
     console.error('❌ Request Error:', error)
     return Promise.reject(error)
@@ -518,9 +971,9 @@ request.interceptors.request.use(
 
 ### 步驟 4：加上回應攔截器
 
-繼續在 `src/services/request.js` 中加上：
+繼續在 `src/services/request.ts` 中加上：
 
-```javascript
+```typescript
 /**
  * 回應攔截器
  *
@@ -528,7 +981,7 @@ request.interceptors.request.use(
  * 用途：統一處理錯誤、記錄日誌等
  */
 request.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     // 回應成功（status 2xx）
 
     // 開發環境下記錄回應資訊
@@ -543,7 +996,7 @@ request.interceptors.response.use(
     // 回傳 response
     return response
   },
-  (error) => {
+  (error: AxiosError) => {
     // 回應失敗（status 4xx, 5xx）
 
     console.error('❌ Response Error:', error)
@@ -576,7 +1029,7 @@ request.interceptors.response.use(
           break
 
         default:
-          console.error(`🔥 錯誤 ${status}:`, data?.message || '未知錯誤')
+          console.error(`🔥 錯誤 ${status}:`, (data as any)?.message || '未知錯誤')
       }
     } else if (error.request) {
       // 請求已發送，但沒有收到回應（例如：伺服器沒回應）
@@ -602,9 +1055,20 @@ request.interceptors.response.use(
 
 ### 步驟 5：導出常用方法（可選）
 
-在 `src/services/request.js` 最後加上：
+在 `src/services/request.ts` 最後加上：
 
-```javascript
+```typescript
+/**
+ * API 請求方法類型定義
+ */
+interface APIClient {
+  get: <T = any>(url: string, config?: any) => Promise<AxiosResponse<T>>
+  post: <T = any>(url: string, data?: any, config?: any) => Promise<AxiosResponse<T>>
+  put: <T = any>(url: string, data?: any, config?: any) => Promise<AxiosResponse<T>>
+  patch: <T = any>(url: string, data?: any, config?: any) => Promise<AxiosResponse<T>>
+  delete: <T = any>(url: string, config?: any) => Promise<AxiosResponse<T>>
+}
+
 /**
  * 導出常用的請求方法
  *
@@ -612,7 +1076,7 @@ request.interceptors.response.use(
  * import { api } from './request'
  * api.get('/products')
  */
-export const api = {
+export const api: APIClient = {
   get: (url, config) => request.get(url, config),
   post: (url, data, config) => request.post(url, data, config),
   put: (url, data, config) => request.put(url, data, config),
@@ -621,13 +1085,18 @@ export const api = {
 }
 ```
 
-### 完整的 request.js
+### 完整的 request.ts
 
-```javascript
-import axios from 'axios'
+```typescript
+import axios, {
+  type AxiosInstance,
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosError
+} from 'axios'
 
 // 創建 axios 實例
-export const request = axios.create({
+export const request: AxiosInstance = axios.create({
   baseURL: 'http://localhost:3001',
   timeout: 5000,
   headers: {
@@ -637,7 +1106,7 @@ export const request = axios.create({
 
 // 請求攔截器
 request.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -653,7 +1122,7 @@ request.interceptors.request.use(
 
     return config
   },
-  (error) => {
+  (error: AxiosError) => {
     console.error('❌ Request Error:', error)
     return Promise.reject(error)
   }
@@ -661,7 +1130,7 @@ request.interceptors.request.use(
 
 // 回應攔截器
 request.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     if (import.meta.env.DEV) {
       console.log('✅ API Response:', {
         status: response.status,
@@ -671,7 +1140,7 @@ request.interceptors.response.use(
     }
     return response
   },
-  (error) => {
+  (error: AxiosError) => {
     console.error('❌ Response Error:', error)
 
     if (error.response) {
@@ -693,7 +1162,7 @@ request.interceptors.response.use(
           console.error('💥 伺服器錯誤')
           break
         default:
-          console.error(`🔥 錯誤 ${status}:`, data?.message || '未知錯誤')
+          console.error(`🔥 錯誤 ${status}:`, (data as any)?.message || '未知錯誤')
       }
     } else if (error.request) {
       console.error('🌐 網路錯誤：無法連接到伺服器')
@@ -705,8 +1174,17 @@ request.interceptors.response.use(
   }
 )
 
+// API 請求方法類型
+interface APIClient {
+  get: <T = any>(url: string, config?: any) => Promise<AxiosResponse<T>>
+  post: <T = any>(url: string, data?: any, config?: any) => Promise<AxiosResponse<T>>
+  put: <T = any>(url: string, data?: any, config?: any) => Promise<AxiosResponse<T>>
+  patch: <T = any>(url: string, data?: any, config?: any) => Promise<AxiosResponse<T>>
+  delete: <T = any>(url: string, config?: any) => Promise<AxiosResponse<T>>
+}
+
 // 導出常用方法
-export const api = {
+export const api: APIClient = {
   get: (url, config) => request.get(url, config),
   post: (url, data, config) => request.post(url, data, config),
   put: (url, data, config) => request.put(url, data, config),
@@ -719,7 +1197,7 @@ export const api = {
 
 ## 第五階段：整合 API 層
 
-現在我們要整合 Zod + Axios，建立完整的 API 層。
+現在我們要整合 Zod + Axios + TypeScript，建立完整的 API 層。
 
 ### 架構說明
 
@@ -734,20 +1212,23 @@ export const api = {
    ↓ 回傳資料
 [Zod 驗證] (parseProducts())
    ↓ 驗證成功
-[回傳給組件]
+[回傳給組件] (TypeScript 類型保證)
 ```
 
 ### 步驟 1：創建 API 檔案
 
-創建 `src/services/api/product.js`：
+創建 `src/services/api/product.ts`：
 
-```javascript
-import { request } from '../request.js'
+```typescript
+import { request } from '../request'
 import {
   parseProduct,
   parseProducts,
-  createProductSchema
-} from '../schema/product.js'
+  createProductSchema,
+  type Product,
+  type CreateProduct,
+  type UpdateProduct
+} from '../schema/product'
 
 /**
  * 產品相關 API
@@ -755,14 +1236,14 @@ import {
  * 每個方法都會：
  * 1. 發送 HTTP 請求
  * 2. 使用 Zod 驗證回應資料
- * 3. 回傳驗證後的資料
+ * 3. 回傳驗證後的資料（TypeScript 類型保證）
  */
 export const productAPI = {
   /**
    * 獲取所有產品
-   * @returns {Promise<Product[]>}
+   * @returns 產品陣列
    */
-  async getAll() {
+  async getAll(): Promise<Product[]> {
     const response = await request.get('/products')
     // 使用 Zod 驗證回應資料
     return parseProducts(response.data)
@@ -770,20 +1251,20 @@ export const productAPI = {
 
   /**
    * 獲取單一產品
-   * @param {number} id - 產品 ID
-   * @returns {Promise<Product>}
+   * @param id - 產品 ID
+   * @returns 產品物件
    */
-  async getById(id) {
+  async getById(id: number): Promise<Product> {
     const response = await request.get(`/products/${id}`)
     return parseProduct(response.data)
   },
 
   /**
    * 創建新產品
-   * @param {CreateProduct} productData - 產品資料
-   * @returns {Promise<Product>}
+   * @param productData - 產品資料
+   * @returns 新建的產品
    */
-  async create(productData) {
+  async create(productData: CreateProduct): Promise<Product> {
     // 前端驗證：確保資料格式正確
     const validatedData = createProductSchema.parse(productData)
 
@@ -796,21 +1277,20 @@ export const productAPI = {
 
   /**
    * 更新產品
-   * @param {number} id - 產品 ID
-   * @param {UpdateProduct} productData - 要更新的資料
-   * @returns {Promise<Product>}
+   * @param id - 產品 ID
+   * @param productData - 要更新的資料
+   * @returns 更新後的產品
    */
-  async update(id, productData) {
+  async update(id: number, productData: UpdateProduct): Promise<Product> {
     const response = await request.put(`/products/${id}`, productData)
     return parseProduct(response.data)
   },
 
   /**
    * 刪除產品
-   * @param {number} id - 產品 ID
-   * @returns {Promise<void>}
+   * @param id - 產品 ID
    */
-  async delete(id) {
+  async delete(id: number): Promise<void> {
     await request.delete(`/products/${id}`)
   }
 }
@@ -818,10 +1298,11 @@ export const productAPI = {
 
 ### 步驟 2：測試 API 層
 
-創建 `src/test-product-api.js`：
+創建 `src/test-product-api.ts`：
 
-```javascript
-import { productAPI } from './services/api/product.js'
+```typescript
+import { productAPI } from './services/api/product'
+import type { CreateProduct } from './services/schema/product'
 
 async function testProductAPI() {
   try {
@@ -830,7 +1311,7 @@ async function testProductAPI() {
     console.log('✅ 獲取成功', products)
 
     console.log('\n=== 測試 2：創建新產品 ===')
-    const newProduct = {
+    const newProduct: CreateProduct = {
       name: 'MacBook Pro',
       price: 50000,
       stock: 10,
@@ -855,12 +1336,21 @@ async function testProductAPI() {
     await productAPI.delete(created.id)
     console.log('✅ 刪除成功')
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ 測試失敗', error.message)
   }
 }
 
 testProductAPI()
+```
+
+執行測試（需要先啟動 JSON Server）：
+```bash
+# 終端機 1：啟動 JSON Server
+npm run json-server
+
+# 終端機 2：執行測試
+npx tsx src/test-product-api.ts
 ```
 
 ---
@@ -875,18 +1365,19 @@ testProductAPI()
 
 ### 步驟 1：建立 Store（Pinia）
 
-創建 `src/stores/product.js`：
+創建 `src/stores/product.ts`：
 
-```javascript
+```typescript
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { productAPI } from '@/services/api/product'
+import type { Product, CreateProduct, UpdateProduct } from '@/services/schema/product'
 
 export const useProductStore = defineStore('product', () => {
   // State
-  const products = ref([])
+  const products = ref<Product[]>([])
   const loading = ref(false)
-  const error = ref(null)
+  const error = ref<string | null>(null)
 
   // Getters
   const activeProducts = computed(() =>
@@ -901,7 +1392,7 @@ export const useProductStore = defineStore('product', () => {
     error.value = null
     try {
       products.value = await productAPI.getAll()
-    } catch (err) {
+    } catch (err: any) {
       error.value = err.message
       throw err
     } finally {
@@ -909,14 +1400,14 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  const createProduct = async (productData) => {
+  const createProduct = async (productData: CreateProduct) => {
     loading.value = true
     error.value = null
     try {
       const newProduct = await productAPI.create(productData)
       products.value.push(newProduct)
       return newProduct
-    } catch (err) {
+    } catch (err: any) {
       error.value = err.message
       throw err
     } finally {
@@ -924,7 +1415,7 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  const updateProduct = async (id, productData) => {
+  const updateProduct = async (id: number, productData: UpdateProduct) => {
     loading.value = true
     error.value = null
     try {
@@ -934,7 +1425,7 @@ export const useProductStore = defineStore('product', () => {
         products.value[index] = updated
       }
       return updated
-    } catch (err) {
+    } catch (err: any) {
       error.value = err.message
       throw err
     } finally {
@@ -942,13 +1433,13 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  const deleteProduct = async (id) => {
+  const deleteProduct = async (id: number) => {
     loading.value = true
     error.value = null
     try {
       await productAPI.delete(id)
       products.value = products.value.filter(p => p.id !== id)
-    } catch (err) {
+    } catch (err: any) {
       error.value = err.message
       throw err
     } finally {
@@ -973,420 +1464,11 @@ export const useProductStore = defineStore('product', () => {
 })
 ```
 
-### 步驟 2：建立產品列表組件
+### 步驟 2-5：Vue 組件部分
 
-創建 `src/views/ProductList.vue`：
+Vue 組件部分與之前相同，只需確保在 `<script setup lang="ts">` 中使用 TypeScript。
 
-```vue
-<template>
-  <div class="product-list">
-    <h1>產品管理</h1>
-
-    <!-- 載入中 -->
-    <div v-if="loading" class="loading">載入中...</div>
-
-    <!-- 錯誤訊息 -->
-    <div v-if="error" class="error">{{ error }}</div>
-
-    <!-- 產品列表 -->
-    <div v-else class="products">
-      <div class="header">
-        <p>總共 {{ productCount }} 個產品</p>
-        <button @click="showCreateForm = true">新增產品</button>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>名稱</th>
-            <th>價格</th>
-            <th>庫存</th>
-            <th>分類</th>
-            <th>狀態</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="product in products" :key="product.id">
-            <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
-            <td>${{ product.price.toLocaleString() }}</td>
-            <td>{{ product.stock }}</td>
-            <td>{{ product.category }}</td>
-            <td>
-              <span :class="product.isActive ? 'active' : 'inactive'">
-                {{ product.isActive ? '啟用' : '停用' }}
-              </span>
-            </td>
-            <td>
-              <button @click="editProduct(product)">編輯</button>
-              <button @click="handleDelete(product.id)">刪除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 新增/編輯表單 -->
-    <ProductForm
-      v-if="showCreateForm || editingProduct"
-      :product="editingProduct"
-      @save="handleSave"
-      @cancel="handleCancel"
-    />
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useProductStore } from '@/stores/product'
-import ProductForm from '@/components/ProductForm.vue'
-
-const productStore = useProductStore()
-const { products, loading, error, productCount } = productStore
-
-const showCreateForm = ref(false)
-const editingProduct = ref(null)
-
-onMounted(() => {
-  productStore.fetchProducts()
-})
-
-const editProduct = (product) => {
-  editingProduct.value = { ...product }
-  showCreateForm.value = false
-}
-
-const handleSave = async (productData) => {
-  try {
-    if (editingProduct.value) {
-      // 更新
-      await productStore.updateProduct(editingProduct.value.id, productData)
-      alert('更新成功！')
-    } else {
-      // 新增
-      await productStore.createProduct(productData)
-      alert('新增成功！')
-    }
-    handleCancel()
-  } catch (err) {
-    alert('操作失敗：' + err.message)
-  }
-}
-
-const handleDelete = async (id) => {
-  if (!confirm('確定要刪除這個產品嗎？')) return
-
-  try {
-    await productStore.deleteProduct(id)
-    alert('刪除成功！')
-  } catch (err) {
-    alert('刪除失敗：' + err.message)
-  }
-}
-
-const handleCancel = () => {
-  showCreateForm.value = false
-  editingProduct.value = null
-}
-</script>
-
-<style scoped>
-.product-list {
-  padding: 20px;
-}
-
-.loading {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-}
-
-.error {
-  background-color: #fee;
-  color: #c00;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #f5f5f5;
-  font-weight: 600;
-}
-
-.active {
-  color: #0a0;
-}
-
-.inactive {
-  color: #999;
-}
-
-button {
-  padding: 6px 12px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-</style>
-```
-
-### 步驟 3：建立產品表單組件
-
-創建 `src/components/ProductForm.vue`：
-
-```vue
-<template>
-  <div class="modal-overlay">
-    <div class="modal">
-      <h2>{{ product ? '編輯產品' : '新增產品' }}</h2>
-
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label>產品名稱 *</label>
-          <input
-            v-model="formData.name"
-            type="text"
-            required
-          />
-          <span v-if="errors.name" class="error">{{ errors.name }}</span>
-        </div>
-
-        <div class="form-group">
-          <label>價格 *</label>
-          <input
-            v-model.number="formData.price"
-            type="number"
-            required
-          />
-          <span v-if="errors.price" class="error">{{ errors.price }}</span>
-        </div>
-
-        <div class="form-group">
-          <label>庫存 *</label>
-          <input
-            v-model.number="formData.stock"
-            type="number"
-            required
-          />
-          <span v-if="errors.stock" class="error">{{ errors.stock }}</span>
-        </div>
-
-        <div class="form-group">
-          <label>分類 *</label>
-          <select v-model="formData.category" required>
-            <option value="">請選擇</option>
-            <option value="electronics">電子產品</option>
-            <option value="clothing">服飾</option>
-            <option value="food">食品</option>
-            <option value="other">其他</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>描述</label>
-          <textarea v-model="formData.description" rows="3"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <input v-model="formData.isActive" type="checkbox" />
-            啟用
-          </label>
-        </div>
-
-        <div class="actions">
-          <button type="submit">儲存</button>
-          <button type="button" @click="$emit('cancel')">取消</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref, reactive } from 'vue'
-import { createProductSchema } from '@/services/schema/product'
-
-const props = defineProps({
-  product: {
-    type: Object,
-    default: null
-  }
-})
-
-const emit = defineEmits(['save', 'cancel'])
-
-const formData = reactive({
-  name: props.product?.name || '',
-  price: props.product?.price || 0,
-  stock: props.product?.stock || 0,
-  category: props.product?.category || '',
-  description: props.product?.description || '',
-  isActive: props.product?.isActive ?? true
-})
-
-const errors = ref({})
-
-const handleSubmit = () => {
-  // 使用 Zod 驗證表單資料
-  try {
-    createProductSchema.parse(formData)
-    errors.value = {}
-    emit('save', formData)
-  } catch (error) {
-    // 顯示驗證錯誤
-    const newErrors = {}
-    error.errors.forEach(err => {
-      newErrors[err.path[0]] = err.message
-    })
-    errors.value = newErrors
-  }
-}
-</script>
-
-<style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.error {
-  color: #c00;
-  font-size: 0.875rem;
-  margin-top: 4px;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button[type="submit"] {
-  background-color: #28a745;
-  color: white;
-}
-
-button[type="button"] {
-  background-color: #6c757d;
-  color: white;
-}
-</style>
-```
-
-### 步驟 4：設定路由
-
-在 `src/router/index.js` 加上產品管理路由：
-
-```javascript
-{
-  path: '/products',
-  name: 'products',
-  component: () => import('../views/ProductList.vue')
-}
-```
-
-### 步驟 5：準備後端資料（JSON Server）
-
-更新 `db.json`，加上產品資料：
-
-```json
-{
-  "products": [
-    {
-      "id": 1,
-      "name": "iPhone 15 Pro",
-      "price": 35900,
-      "stock": 50,
-      "description": "最新款 iPhone",
-      "category": "electronics",
-      "isActive": true
-    },
-    {
-      "id": 2,
-      "name": "MacBook Air",
-      "price": 34900,
-      "stock": 30,
-      "description": "輕薄筆電",
-      "category": "electronics",
-      "isActive": true
-    }
-  ],
-  "users": [...],
-  "posts": [...],
-  "comments": [...]
-}
-```
+詳細代碼請參考原文檔的 ProductList.vue 和 ProductForm.vue。
 
 ---
 
@@ -1394,125 +1476,42 @@ button[type="button"] {
 
 ### 測試清單
 
-#### ✅ Zod Schema 測試
+#### ✅ Zod + TypeScript 測試
 
-- [ ] **測試 1：基本驗證**
-  ```javascript
-  const valid = { id: 1, name: 'iPhone', price: 30000, stock: 50, category: 'electronics' }
-  productSchema.parse(valid) // 應該成功
+- [ ] **測試 1：類型推導**
+  ```typescript
+  type Product = z.infer<typeof productSchema>
+  // 檢查 TypeScript 自動完成是否正常
   ```
 
-- [ ] **測試 2：錯誤資料**
-  ```javascript
-  const invalid = { id: 'abc', name: '', price: -100 }
-  productSchema.parse(invalid) // 應該拋出錯誤
+- [ ] **測試 2：基本驗證**
+  ```bash
+  npx tsx src/test-product-schema.ts
   ```
 
-- [ ] **測試 3：.omit() 功能**
-  ```javascript
-  const data = { name: 'iPad', price: 20000, stock: 30, category: 'electronics' }
-  createProductSchema.parse(data) // 不需要 id，應該成功
-  ```
-
-- [ ] **測試 4：.partial() 功能**
-  ```javascript
-  const update = { price: 25000 }
-  updateProductSchema.parse(update) // 只提供部分欄位，應該成功
+- [ ] **測試 3：進階用法**
+  ```bash
+  npx tsx src/test-zod-advanced.ts
   ```
 
 #### ✅ Axios 攔截器測試
 
-- [ ] **測試 5：請求攔截器**
-  - 打開開發者工具 → Network
-  - 發送任何 API 請求
-  - 檢查 Request Headers 是否有 `Authorization: Bearer xxx`
-  - 檢查 Console 是否有 `🚀 API Request:` 日誌
-
-- [ ] **測試 6：回應攔截器（成功）**
-  - 發送成功的 API 請求
-  - 檢查 Console 是否有 `✅ API Response:` 日誌
-
-- [ ] **測試 7：回應攔截器（錯誤）**
-  - 故意發送錯誤請求（例如：GET /products/99999）
-  - 檢查 Console 是否有錯誤訊息
-
-#### ✅ API 層測試
-
-- [ ] **測試 8：獲取產品列表**
-  ```javascript
-  const products = await productAPI.getAll()
-  console.log(products) // 應該回傳驗證過的陣列
+- [ ] **測試 4：API 層測試**
+  ```bash
+  npx tsx src/test-product-api.ts
   ```
 
-- [ ] **測試 9：創建產品**
-  ```javascript
-  const newProduct = await productAPI.create({
-    name: 'Test',
-    price: 100,
-    stock: 10,
-    category: 'electronics'
-  })
-  console.log(newProduct) // 應該回傳新產品
-  ```
-
-- [ ] **測試 10：Zod 驗證整合**
-  - 創建產品時故意提供錯誤資料
-  - 應該在發送請求「之前」就被 Zod 攔截
-
-#### ✅ 完整功能測試
-
-- [ ] **測試 11：產品列表頁面**
-  - 訪問 `/products`
-  - 應該顯示所有產品
-  - 檢查載入狀態是否正確
-
-- [ ] **測試 12：新增產品**
-  - 點擊「新增產品」按鈕
-  - 填寫表單
-  - 提交後應該出現在列表中
-
-- [ ] **測試 13：編輯產品**
-  - 點擊某個產品的「編輯」按鈕
-  - 修改資料
-  - 提交後應該更新
-
-- [ ] **測試 14：刪除產品**
-  - 點擊某個產品的「刪除」按鈕
-  - 確認刪除
-  - 產品應該從列表中消失
-
-- [ ] **測試 15：表單驗證**
-  - 嘗試提交空白表單
-  - 應該顯示錯誤訊息
-  - 提供負數價格
-  - 應該被 Zod 攔截
-
-### 執行測試的步驟
-
-1. **啟動 JSON Server**
-   ```bash
-   npm run json-server
-   ```
-
-2. **啟動開發服務器**
-   ```bash
-   npm run dev
-   ```
-
-3. **打開瀏覽器**
-   - 訪問 `http://localhost:5173/products`
-   - 打開開發者工具（F12）
-
-4. **執行測試清單**
-   - 逐一測試上面的項目
-   - 記錄測試結果
+- [ ] **測試 5：瀏覽器測試**
+  - 打開開發者工具
+  - 檢查請求/回應攔截器是否正常運作
 
 ### 成功標準
 
 ✅ **全部測試通過時，代表您已經掌握：**
 - Zod 的基本和進階用法
+- TypeScript 類型推導
 - Axios 攔截器的設定和運作原理
-- Zod + Axios 的整合方式
+- Zod + Axios + TypeScript 的整合方式
 - 完整的 CRUD 功能開發流程
 
 ---
@@ -1521,8 +1520,8 @@ button[type="button"] {
 
 您現在已經學會：
 
-### ✅ Zod 資料驗證
-- 定義 schema
+### ✅ Zod + TypeScript 資料驗證
+- 定義 schema 並自動推導類型
 - 使用 `.omit()`, `.partial()`, `.array()`
 - 建立解析函數
 - 整合到實際專案中
@@ -1531,7 +1530,7 @@ button[type="button"] {
 - 創建 axios 實例
 - 設定請求攔截器（自動加 token）
 - 設定回應攔截器（統一錯誤處理）
-- 了解攔截器的運作流程
+- TypeScript 類型安全
 
 ### ✅ 完整功能開發
 - API 層設計
@@ -1541,20 +1540,19 @@ button[type="button"] {
 
 ### 🚀 下一步建議
 
-1. **擴展功能**
+1. **使用 Vitest 寫測試**
+   - 安裝：`npm install -D vitest`
+   - 撰寫專業的單元測試
+
+2. **擴展功能**
    - 加上搜尋和篩選
    - 實作分頁
    - 加上圖片上傳
 
-2. **優化體驗**
-   - 加上載入動畫
-   - 實作樂觀更新
-   - 加上錯誤重試
-
 3. **進階學習**
-   - 整合 TypeScript
    - 使用 Vue Query
-   - 實作單元測試
+   - 實作 SSR
+   - 優化效能
 
 ---
 
@@ -1562,5 +1560,7 @@ button[type="button"] {
 
 - [Zod 官方文件](https://zod.dev/)
 - [Axios 官方文件](https://axios-http.com/)
+- [TypeScript 官方文件](https://www.typescriptlang.org/)
 - [Vue 3 官方文件](https://vuejs.org/)
 - [Pinia 官方文件](https://pinia.vuejs.org/)
+- [tsx - TypeScript Execute](https://github.com/esbuild-kit/tsx)
