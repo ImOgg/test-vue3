@@ -4,7 +4,7 @@
 
 ## 🆕 最新更新 - 完整架構重構 ✅
 
-**🎯 專案定位：** 現代化數據獲取方案的完整示範，展示 Vue Query 和 VueUse 的最佳實踐應用
+**🎯 專案定位：** 現代化數據獲取方案的完整示範，展示 Vue Query 和 VueUse 的實踐應用
 
 ### 📅 今日完成的重大更新
 
@@ -16,7 +16,7 @@
 
 ### 🔥 核心特色
 
-本專案現已整合了現代化的數據獲取方案：
+本專案現已整合了現代化的數據獲取方式：
 
 - **🔥 Vue Query (@tanstack/vue-query)**: 強大的數據同步和緩存管理
 - **⚡ VueUse (@vueuse/core)**: 豐富的組合式函數工具庫
@@ -61,7 +61,7 @@
 ### 🔧 技術實現亮點
 
 - **混合數據策略**: Vue Query 處理複雜數據 + VueUse 處理簡單數據
-- **智能緩存機制**: 避免重複請求，5分鐘智能緩存
+- **智能緩存機制**: 避免重複請求，5分鐘緩存
 - **統一錯誤處理**: Axios 攔截器 + Zod 雙重驗證
 - **模組化架構**: 清晰的分層設計，易於維護和擴展
 
@@ -76,9 +76,9 @@
 ┌────────────────▼────────────────────────────────────┐
 │  🪝 Hooks Layer (Vue Query & VueUse + Pinia)        │
 │  hooks/usePosts.js, hooks/useUsers.js              │
-│  - Vue Query: 文章數據獲取和智能緩存                  │
+│  - Vue Query: 文章數據獲取和緩存                  │
 │  - VueUse + Pinia: 用戶數據獲取和全域緩存           │
-│  - 避免重複請求，智能緩存管理                         │
+│  - 避免重複請求，緩存管理                         │
 └────────────────┬────────────────────────────────────┘
                  │ 使用
 ┌────────────────▼────────────────────────────────────┐
@@ -475,9 +475,6 @@ function RouterView() {
 <transition 
   name="fade" 
   mode="out-in"
-  @before-enter="onBeforeEnter"
-  @enter="onEnter" 
-  @leave="onLeave"
 >
   <component :is="Component" :key="route.path" />
 </transition>
